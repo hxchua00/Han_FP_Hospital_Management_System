@@ -8,8 +8,7 @@ namespace Han_FP_Hospital_Management_System
 {
     class Patient
     {
-        public Guid PatientID { get; set; }          //Unique ID for patients
-
+        public Guid PatientID { get; set; }             //Unique ID for patients
 		public string PatientName { get; set; }         //Name of Patient
 		public double PatientWeight { get; set; }       //Weight of Patient
 		public double PatientHeight { get; set; }       //Height of Patient

@@ -49,17 +49,18 @@ namespace Han_FP_Hospital_Management_System
             {
                 if(newPatient.PatientID == patientRef.Value)
                 {
-                    Console.WriteLine($"Your number will be {patientRef.Key}");
-                    Console.WriteLine();
+                    Console.WriteLine($"Your number will be {patientRef.Key}\n");
                 }
             }
         }
 
+        //After seeing the doctor, Patient will be assigned to the department related to their illness
         public void AdmitPatient()
         {
 
         }
-              
+        
+        //Remove Patient from the QueueList and Department, but data still remain for future reference
         public void DischargePatient()
         {
 
