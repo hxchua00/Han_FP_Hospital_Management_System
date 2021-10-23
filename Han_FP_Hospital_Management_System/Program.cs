@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
 
 namespace Han_FP_Hospital_Management_System
 {
@@ -14,7 +11,10 @@ namespace Han_FP_Hospital_Management_System
             Console.WriteLine();
             Console.WriteLine("1) Log in");
             Console.WriteLine("2) Exit\n");
+
             int Start = Convert.ToInt32(Console.ReadLine());
+            Console.Write($"Chosen option: {Start}\n");
+
             bool cont = true;
             while (cont)
             {
@@ -31,24 +31,28 @@ namespace Han_FP_Hospital_Management_System
                         break;
                 }
             }
-                        
+
             Console.ReadLine();
         }
 
+        //Start of the system, Login Page - Display different menu according to different users
         static void Login()
         {
+            Console.WriteLine();
             Console.WriteLine("Pick your account type: ");
             Console.WriteLine("1) Patient");
-            Console.WriteLine("2) Staff");
-            Console.WriteLine();
+            Console.WriteLine("2) Staff\n");
+
             int accType = Convert.ToInt32(Console.ReadLine());
+            Console.Write($"Chosen option: {accType}\n");
+
             switch (accType)
             {
                 case 1:
                     CheckFirstVisit();
                     break;
                 case 2:
-                    StaffMenu();
+                    ValidateStaffLogin();
                     break;
                 default:
                     Console.WriteLine("Invalid option chosen.");
@@ -56,22 +60,43 @@ namespace Han_FP_Hospital_Management_System
             }
         }
 
+        //Checks if patient has visited the hospital before or not
+        //New patient will always go through Registration first
         static void CheckFirstVisit()
         {
-            Patient newPatient = new Patient();
+            Hospital_Worker HW = new Hospital_Worker();
 
+            Console.WriteLine();
             Console.WriteLine("Is this your first visit here?");
             Console.WriteLine("1) Yes");
             Console.WriteLine("2) No\n");
+
             int checkVisit = Convert.ToInt32(Console.ReadLine());
+            Console.Write($"Chosen option: {checkVisit}\n");
             if (checkVisit == 1)
             {
-                Hospital_Worker HW = new Hospital_Worker();
-                HW.AddPatient(newPatient);
+                HW.AddPatient();
             }
             else if(checkVisit == 2)
             {
-                Console.WriteLine("Please enter your name: ");
+                Console.WriteLine("Please enter ID number: ");
+                int input = Convert.ToInt32(Console.ReadLine());
+
+                // PatientMenu(input);
+
+                for (int i = 0; i < Hospital_Worker.AllPatientInfo.Count; i++)
+                {
+                    if (Hospital_Worker.AllPatientInfo[i].PatientID == input)
+                    {
+                        Console.WriteLine("Patient found!");
+                        Hospital_Worker.AllPatientInfo[i].NumOfVisits++;
+                        PatientMenu(input);
+                    }
+                    else
+                    {
+                        Console.WriteLine("ID could not be found. Please enter a valid ID.\n");
+                    }
+                }
             }
             else
             {
@@ -79,14 +104,157 @@ namespace Han_FP_Hospital_Management_System
             }
         }
 
-        static void PatientMenu()
+        //Features that Patients that can do
+        static void PatientMenu(int ID)
         {
-            
+            Hospital_Worker HW = new Hospital_Worker();
+            bool loop = true;
+
+            while (loop)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"Welcome, {HW.GetPatientName(ID)}");
+                Console.WriteLine("What is your business today?\n");
+                Console.WriteLine("1) Consult Doctor");
+                Console.WriteLine("2) View Current Bill");
+                Console.WriteLine("3) Pay the bill");
+                Console.WriteLine("4) Nothing\n");
+
+                int choice = Convert.ToInt32(Console.ReadLine());
+                Console.Write($"Chosen option: {choice}\n");
+
+                switch (choice)
+                {
+                    case 1:
+                        HW.AdmitPatient(ID);
+                        break;
+                    case 2:
+                        HW.CalculateTotalBill(ID);
+                        break;
+                    case 3:
+                        HW.SettleBill(ID);
+                        break;
+                    case 4:
+                        Console.WriteLine("There are other patients, please do not disturb if nothing else.\n");
+                        loop = false;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option! Please choose from the provided options.\n");
+                        break;
+                }
+            } 
         }
 
-        static void StaffMenu()
+        static int ValidateStaffLogin()
         {
+           // StaffAccounts SA = new StaffAccounts();
 
+            Console.WriteLine("Enter Staff ID: ");
+            int sID = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Enter Staff Password: ");
+            string sPassword = Console.ReadLine();
+
+            var Hasher = new PasswordHasher();
+
+            for (int i = 0; i < StaffAccounts.StaffAccountList.Count; i++)
+            {
+                if (StaffAccounts.StaffAccountList[i].ID == sID && 
+                    PasswordCreator.verifyHashedPassword(StaffAccounts.StaffAccountList[i].HashedPassword, sPassword) 
+                    == PasswordVerificationResult.Success)
+                {
+                    if (sID == 1001)
+                        WorkerMenu(sID);
+                    else if (sID == 3001)
+                        AdminMenu(sID);
+                }
+                else
+                {
+                    Console.WriteLine("Invalid credentials entered.\n");
+                }
+            }
+        }
+
+        static void WorkerMenu(int ID)
+        {
+            Hospital_Worker HW = new Hospital_Worker();
+
+            bool loop = true;
+            while (loop)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"Using Account ID: {ID}, Welcome!");
+                Console.WriteLine("Please choose what to do: \n");
+                Console.WriteLine("1) Add Patient");
+                Console.WriteLine("2) Find Patient");
+                Console.WriteLine("3) Generate Bill for patient");
+                Console.WriteLine("4) Discharge Patient");
+                Console.WriteLine("5) Nothing\n");
+
+                int option = Convert.ToInt32(Console.ReadLine());
+                Console.Write($"Chosen option: {option}\n");
+
+                switch (option)
+                {
+                    case 1:
+                        HW.AddPatient();
+                        break;
+                    case 2:
+                        Console.WriteLine("Please enter Patient's ID: \n");
+                        int pID = Convert.ToInt32(Console.ReadLine());
+                        HW.ViewPatientInfo(pID);
+                        break;
+                    case 3:
+                        HW.GenerateBill(ID);
+                        break;
+                    case 4:
+                        HW.DischargePatient(ID);
+                        break;
+                    case 5:
+                        Console.WriteLine("Taking a break so soon? There's still many things to do.\n");
+                        loop = false;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option! Please choose from the provided options.\n");
+                        break;
+                }
+            }
+        }
+
+        static void AdminMenu(int ID)
+        {
+            Hospital_Admin HA = new Hospital_Admin();
+
+            bool loop = true;
+            while (loop)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"Using Account ID: {ID}, Welcome!");
+                Console.WriteLine("Please choose what to do: \n");
+                Console.WriteLine("1) View All Patients in all Departments");
+                Console.WriteLine("2) View All bills generated");
+                Console.WriteLine("3) Nothing\n");
+
+                int option = Convert.ToInt32(Console.ReadLine());
+                Console.Write($"Chosen option: {option}\n");
+
+                switch (option)
+                {
+                    case 1:
+                        HA.PrintPatientDept();
+                        break;
+                    case 2:
+                        HA.PrintAllBills();
+                        break;
+                    case 3:
+                        Console.WriteLine("Taking a break so soon? There's still many things to do.\n");
+                        loop = false;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option! Please choose from the provided options.\n");
+                        break;
+               
+                }
+            }
         }
     }
 }
