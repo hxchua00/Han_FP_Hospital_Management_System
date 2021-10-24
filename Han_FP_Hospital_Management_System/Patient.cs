@@ -68,7 +68,9 @@ namespace Han_FP_Hospital_Management_System
                 Department = null,
                 WardClass = null,
                 ListOfSymptoms = null,  
-                ListOfMedicines = null
+                ListOfMedicines = null,
+
+                BillPayment = false
             };
             patientcounter++;
             return newPatient;

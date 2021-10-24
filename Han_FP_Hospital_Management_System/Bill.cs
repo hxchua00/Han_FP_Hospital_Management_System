@@ -36,9 +36,6 @@ namespace Han_FP_Hospital_Management_System
 
         public Bill CreateNewBill(int ID)
         {
-            Console.Write("Enter Subsidy amount here (%): ");
-            double Subsidy = Convert.ToDouble(Console.ReadLine());
-
             Bill newBill = new Bill()
             {
                 BillID = BillNum,
@@ -50,7 +47,7 @@ namespace Han_FP_Hospital_Management_System
                 ListOfMedicine = HW.GetPatientMedicineList(ID),
 
                 GST = 0.07,
-                Subsidy = Subsidy / 100,
+                Subsidy = 0,
                 Total = HW.CalculateTotalBill(ID),
                 Status = "Not Paid"
             };

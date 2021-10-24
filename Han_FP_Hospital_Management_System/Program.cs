@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNet.Identity;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace Han_FP_Hospital_Management_System
 {
@@ -147,7 +150,7 @@ namespace Han_FP_Hospital_Management_System
                         HW.AdmitPatient(ID);
                         break;
                     case 2:
-                        HW.CalculateTotalBill(ID);
+                        HW.ShowTheBill(ID);
                         break;
                     case 3:
                         HW.SettleBill(ID);
@@ -169,19 +172,19 @@ namespace Han_FP_Hospital_Management_System
             string sPassword = Console.ReadLine();
 
             int result = 0;
-
             for (int i = 0; i < StaffAccounts.StaffAccountList.Count; i++)
             {
-                if (StaffAccounts.StaffAccountList[i].ID == sID && 
-                    PasswordCreator.verifyHashedPassword(StaffAccounts.StaffAccountList[i].HashedPassword, sPassword) 
+                if (StaffAccounts.StaffAccountList[i].ID == sID &&
+                    PasswordCreator.verifyHashedPassword(StaffAccounts.StaffAccountList[i].HashedPassword, sPassword)
                     == PasswordVerificationResult.Success)
                 {
                     if (sID == 1001)
                         result = 1;
                     else if (sID == 3001)
                         result = 2;
-                } 
+                }
             }
+
             return result;
         }
 
@@ -234,7 +237,6 @@ namespace Han_FP_Hospital_Management_System
                 }
             }
         }
-
         static void AdminMenu(int ID)
         {
             Hospital_Admin HA = new Hospital_Admin();

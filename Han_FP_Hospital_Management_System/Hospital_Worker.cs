@@ -11,17 +11,16 @@ namespace Han_FP_Hospital_Management_System
         public static List<Patient> AllPatientInfo = new List<Patient>();    //Stores all pateint information
         public static List<Bill> AllBills = new List<Bill>();                //Stores all bills
 
-        public static  Dictionary<int, List<string>> IllnessRecord;          //Keeps a record of all illnees the patient came to the hospital for
+        //Keeps a record of all illnees the patient came to the hospital for
+        public static  Dictionary<int, List<string>> IllnessRecord = new Dictionary<int, List<string>>();  
         
         static Hospital_Worker() 
         {
             var patientList = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
             AllPatientInfo.AddRange(patientList);
 
-            var billList = JsonConvert.DeserializeObject<List<Bill>>(File.ReadAllText("Bills.Json"));
-            AllBills.AddRange(billList);
-
-            IllnessRecord = new Dictionary<int, List<string>>();
+            //var billList = JsonConvert.DeserializeObject<List<Bill>>(File.ReadAllText("Bills.Json"));
+            //AllBills.AddRange(billList);
         }
 
         public void UpdateBillJsonFile()
@@ -92,6 +91,8 @@ namespace Han_FP_Hospital_Management_System
                 }
             }
 
+            IllnessRecord[ID] = lst;
+
             Console.WriteLine("Which department is the patient admitted to?");
             Console.WriteLine("1) Outpatient");
             Console.WriteLine("2) Critical Care");
@@ -124,7 +125,8 @@ namespace Han_FP_Hospital_Management_System
             Console.WriteLine("1) Class A");
             Console.WriteLine("2) Class B");
             Console.WriteLine("3) Class C");
-            Console.WriteLine("4) Private\n");
+            Console.WriteLine("4) Private");
+            Console.WriteLine("5) Not admitting to ward\n");
 
             int WardClass = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine();
@@ -143,8 +145,12 @@ namespace Han_FP_Hospital_Management_System
                 case 4:
                     ward = "Private";
                     break;
+                case 5:
+                    ward = "Unassigned";
+                    break;
                 default:
-                    ward = "No ward";
+                    Console.WriteLine("Invalid input, default 'Unassigned'");
+                    ward = "Unassigned";
                     break;
             }
 
@@ -157,10 +163,10 @@ namespace Han_FP_Hospital_Management_System
                 Console.WriteLine("3) AntiInflammation");
                 Console.WriteLine("4) Antihistamines");
                 Console.WriteLine("5) Antacids");
-                Console.WriteLine("6) Painkillers");
+                Console.WriteLine("6) Painkillers\n");
 
                 int prescribtion = Convert.ToInt32(Console.ReadLine());
-                string medicine = "";
+                string medicine;
 
                 if(prescribtion == 1)
                 {
@@ -215,9 +221,13 @@ namespace Han_FP_Hospital_Management_System
                     AllPatientInfo[i].Department = dept;
                     AllPatientInfo[i].WardClass = ward;
                     Console.WriteLine($"{AllPatientInfo[i].PatientName} has been admitted to {dept}.");
-                    if(ward != "No ward")
+                    if(ward != "Unassigned")
                     {
                         Console.WriteLine($"{AllPatientInfo[i].PatientName} has been admitted to Ward {ward}.\n");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{AllPatientInfo[i].PatientName} is not admitted to any ward.\n");
                     }
                 }
             }
@@ -228,8 +238,26 @@ namespace Han_FP_Hospital_Management_System
         //Remove Patient from the List, but data still remain for future reference
         public void DischargePatient(int ID)
         {
-            
-            UpdatePatientJsonFile();
+            Patient oldPatient;
+            for(int i=0; i < AllPatientInfo.Count; i++)
+            {
+                if(AllPatientInfo[i].PatientID == ID)
+                {
+                    AllPatientInfo[i].Department = "Discharged";
+                    AllPatientInfo[i].WardClass = "Discharged";
+
+                    oldPatient = AllPatientInfo[i];
+                }
+            }
+
+            string PastRecordJson = JsonConvert.SerializeObject(AllPatientInfo);
+            File.WriteAllText("Patient_Past_Records.Json", PastRecordJson);
+
+            List<Patient> PastPatientRecords = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Past_Records.Json"));
+
+            string pList = JsonConvert.SerializeObject(PastPatientRecords);
+            File.WriteAllText("Patient_Past_Records.Json", pList);
+
         }
 
         //Search through database for Patient's Information via Reference ID given to them
@@ -253,9 +281,18 @@ namespace Han_FP_Hospital_Management_System
                     Console.WriteLine($"Contact Number: {WritePatientInfo[i].ContactNum}\n");
 
                     Console.WriteLine($"Doctor In-charge: {WritePatientInfo[i].DoctorInCharge}");
-                    Console.WriteLine($"List of Symptoms: {WritePatientInfo[i].ListOfSymptoms}");
                     Console.WriteLine($"Department: {WritePatientInfo[i].Department}");
-                    Console.WriteLine($"Ward: {WritePatientInfo[i].WardClass}");
+                    Console.WriteLine($"Ward: {WritePatientInfo[i].WardClass}\n");
+
+                    for (int j = 0; j< WritePatientInfo[i].ListOfSymptoms.Count;j++)
+                    {
+                        Console.WriteLine($"Symptom {j}: {WritePatientInfo[i].ListOfSymptoms[j]}");
+                    }
+
+                    for (int j = 0; j < WritePatientInfo[i].ListOfMedicines.Count; j++)
+                    {
+                        Console.WriteLine($"Prescribed medicine {j}: {WritePatientInfo[i].ListOfMedicines[j]}\n");
+                    }
                 }
             } 
         }
@@ -433,19 +470,42 @@ namespace Han_FP_Hospital_Management_System
             double WardPrice = (GetWardPrice(ID) * nights);
             double MedPrice = GetMedicinePrice(ID);
 
+            TotalBill = DeptPrice + WardPrice + MedPrice;
+            double GST = TotalBill * 0.07;
 
+            Console.Write("Enter Subsidy amount here (%): ");
+            double sAmount = Convert.ToDouble(Console.ReadLine());
+            double Subsidised = 0;
+            if (sAmount != 0)
+            {
+                Subsidised = TotalBill * ((Convert.ToDouble(Console.ReadLine()) / 100));
+            }
 
-
-
-            
+            FinalBill = (TotalBill + GST) - Subsidised;
             return FinalBill;
         }
 
         public void SettleBill(int ID)
         {
-            //Remove Patient Info from neccessary areas
-            Console.WriteLine("Thank you for coming! Stay safe and healthy!");
-            Environment.Exit(0);
+            Console.WriteLine("Would you like to pay the bill now?");
+            Console.WriteLine("1) Yes");
+            Console.WriteLine("2) No\n");
+
+            int paythebill = Convert.ToInt32(Console.ReadLine());
+            if(paythebill == 1)
+            {
+                for(int i=0;i< AllBills.Count; i++)
+                {
+                    if(AllBills[i].PatientID == ID)
+                    {
+                        AllBills[i].Status = "Paid";
+                    }
+                    else
+                    {
+                        Console.WriteLine("There is no bill to pay!\n");
+                    }
+                }
+            }
         }
 
         //Creating new bills
@@ -464,6 +524,34 @@ namespace Han_FP_Hospital_Management_System
 
             Console.WriteLine($"A new bill no. {newBill.BillID} has been credited to patient {newBill.PatientName}");
             Console.WriteLine("Please pay the bill before you are able to get discharged.\n");
+        }
+
+        public void ShowTheBill(int ID)
+        {
+            for(int i = 0; i < AllBills.Count; i++)
+            {
+                if(AllBills[i].PatientID == ID)
+                {
+                    Console.WriteLine($"Bill ID: {AllBills[i].BillID}");
+
+                    Console.WriteLine($"Patient ID: {AllBills[i].PatientID}");
+                    Console.WriteLine($"Name: {AllBills[i].PatientName}");
+
+                    Console.WriteLine($"Department: {AllBills[i].Department}");
+                    Console.WriteLine($"Ward: {AllBills[i].WardClass}\n");
+
+                    for (int j = 0; j < AllBills[i].ListOfMedicine.Count; j++)
+                    {
+                        Console.WriteLine($"Medicine {j}: {AllBills[i].ListOfMedicine[j]}");
+                    }
+
+                    Console.WriteLine();
+                    Console.WriteLine($"GST Amount: {AllBills[i].GST}");
+                    Console.WriteLine($"Subsidised Amount: {AllBills[i].Subsidy}");
+                    Console.WriteLine($"Total Amount Payable: {AllBills[i].Total}");
+                    Console.WriteLine($"Payment Status: {AllBills[i].Status}\n");
+                }
+            }
         }
     }
 }

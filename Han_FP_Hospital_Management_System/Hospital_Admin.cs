@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
-using Microsoft.AspNet.Identity;
 
 namespace Han_FP_Hospital_Management_System
 {
@@ -17,28 +16,40 @@ namespace Han_FP_Hospital_Management_System
         //Prints all patients in each department
         public void PrintPatientDept()
         {
-            Console.WriteLine("All Patient in OutPatient (OPD): \n");
+            Console.WriteLine("All Patient in Outpatient: \n");
             for (int i = 0; i < Hospital_Worker.AllPatientInfo.Count; i++)
             {
-                if (Hospital_Worker.AllPatientInfo[i].Department == "OPD")
+                if (Hospital_Worker.AllPatientInfo[i].Department == "Outpatient")
                 {
                     HW.ViewPatientInfo(Hospital_Worker.AllPatientInfo[i].PatientID);
                 }
             }
 
-            Console.WriteLine("All Patient in InPatient (IP): \n");
+            Console.WriteLine();
+            Console.WriteLine("All Patient in Critical Care: \n");
             for (int i = 0; i < Hospital_Worker.AllPatientInfo.Count; i++)
             {
-                if (Hospital_Worker.AllPatientInfo[i].Department == "IP")
+                if (Hospital_Worker.AllPatientInfo[i].Department == "Critical Care")
                 {
                     HW.ViewPatientInfo(Hospital_Worker.AllPatientInfo[i].PatientID);
                 }
             }
 
-            Console.WriteLine("All Patient in Radiology: \n");
+            Console.WriteLine();
+            Console.WriteLine("All Patient in A&E: \n");
             for (int i = 0; i < Hospital_Worker.AllPatientInfo.Count; i++)
             {
-                if (Hospital_Worker.AllPatientInfo[i].Department == "Radiology")
+                if (Hospital_Worker.AllPatientInfo[i].Department == "A&E")
+                {
+                    HW.ViewPatientInfo(Hospital_Worker.AllPatientInfo[i].PatientID);
+                }
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("All Patient in Therapy: \n");
+            for (int i = 0; i < Hospital_Worker.AllPatientInfo.Count; i++)
+            {
+                if (Hospital_Worker.AllPatientInfo[i].Department == "Therapy")
                 {
                     HW.ViewPatientInfo(Hospital_Worker.AllPatientInfo[i].PatientID);
                 }
@@ -58,12 +69,18 @@ namespace Han_FP_Hospital_Management_System
                 Console.WriteLine($"Name: {b.PatientName}");
 
                 Console.WriteLine($"Department: {b.Department}");
-                Console.WriteLine($"Ward: {b.WardClass}");
+                Console.WriteLine($"Ward: {b.WardClass}\n");
+
+                for(int i =0; i< b.ListOfMedicine.Count; i++)
+                {
+                    Console.WriteLine($"Medicine {i}: {b.ListOfMedicine[i]}");
+                }
+
+                Console.WriteLine();
                 Console.WriteLine($"GST Amount: {b.GST}");
                 Console.WriteLine($"Subsidised Amount: {b.Subsidy}");
-
-                Console.WriteLine($"Total Amount Payable: {b.Total}\n");
-
+                Console.WriteLine($"Total Amount Payable: {b.Total}");
+                Console.WriteLine($"Payment Status: {b.Status}\n");
             }
         }
     }
