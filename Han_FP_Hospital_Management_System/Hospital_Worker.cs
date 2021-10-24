@@ -19,8 +19,8 @@ namespace Han_FP_Hospital_Management_System
             var patientList = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
             AllPatientInfo.AddRange(patientList);
 
-            //var billList = JsonConvert.DeserializeObject<List<Bill>>(File.ReadAllText("Bills.Json"));
-            //AllBills.AddRange(billList);
+            var billList = JsonConvert.DeserializeObject<List<Bill>>(File.ReadAllText("Bills.Json"));
+            AllBills.AddRange(billList);
         }
 
         public void UpdateBillJsonFile()
@@ -478,7 +478,7 @@ namespace Han_FP_Hospital_Management_System
             double Subsidised = 0;
             if (sAmount != 0)
             {
-                Subsidised = TotalBill * ((Convert.ToDouble(Console.ReadLine()) / 100));
+                Subsidised = TotalBill * (sAmount / 100);
             }
 
             FinalBill = (TotalBill + GST) - Subsidised;
@@ -494,17 +494,29 @@ namespace Han_FP_Hospital_Management_System
             int paythebill = Convert.ToInt32(Console.ReadLine());
             if(paythebill == 1)
             {
-                for(int i=0;i< AllBills.Count; i++)
+                for (int i = 0; i < AllPatientInfo.Count; i++)
                 {
-                    if(AllBills[i].PatientID == ID)
+                    if (AllPatientInfo[i].PatientID == ID)
                     {
-                        AllBills[i].Status = "Paid";
+                        if(AllPatientInfo[i].BillPayment == true)
+                        {
+                            Console.WriteLine("You have no bill to pay!\n");
+                        }
+                        else
+                        {      
+                            for (int j = 0; j < AllBills.Count; j++)
+                            {
+                                if (AllBills[j].PatientID == ID)
+                                    AllBills[j].Status = "Paid";
+                            }
+                            AllPatientInfo[i].BillPayment = true;
+                            Console.WriteLine();
+                            Console.WriteLine("Thank you for payng the bill!");
+                            Console.WriteLine("Please wait awhile for the payment to go through.");
+                            Console.WriteLine("Then you will be officially discharged when the doctor says so.\n");
+                        }
                     }
-                    else
-                    {
-                        Console.WriteLine("There is no bill to pay!\n");
-                    }
-                }
+                } 
             }
         }
 
@@ -512,7 +524,6 @@ namespace Han_FP_Hospital_Management_System
         public void GenerateBill(int ID)
         {
             AllBills = JsonConvert.DeserializeObject<List<Bill>>(File.ReadAllText("Bills.Json"));
-
             string BList = JsonConvert.SerializeObject(AllBills);
             File.WriteAllText("Bills.Json", BList);
 
@@ -528,7 +539,7 @@ namespace Han_FP_Hospital_Management_System
 
         public void ShowTheBill(int ID)
         {
-            for(int i = 0; i < AllBills.Count; i++)
+            for (int i = 0; i < AllBills.Count; i++)
             {
                 if(AllBills[i].PatientID == ID)
                 {
@@ -550,6 +561,10 @@ namespace Han_FP_Hospital_Management_System
                     Console.WriteLine($"Subsidised Amount: {AllBills[i].Subsidy}");
                     Console.WriteLine($"Total Amount Payable: {AllBills[i].Total}");
                     Console.WriteLine($"Payment Status: {AllBills[i].Status}\n");
+                }
+                else
+                {
+                    Console.WriteLine("There are currently no bills to be shown.\n");
                 }
             }
         }

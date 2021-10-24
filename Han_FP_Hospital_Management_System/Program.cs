@@ -113,15 +113,11 @@ namespace Han_FP_Hospital_Management_System
                         PatientMenu(input);
                         break;
                     }
-                    else
-                    {
-                        Console.WriteLine("ID could not be found. Please enter a valid ID.\n");
-                    }
                 }
             }
             else
             {
-                Console.WriteLine("Invalid input!\n");
+                 Console.WriteLine("ID could not be found. Please enter a valid ID.\n"); 
             }
         }
 
@@ -156,7 +152,7 @@ namespace Han_FP_Hospital_Management_System
                         HW.SettleBill(ID);
                         break;
                     case 4:
-                        Console.WriteLine("There are other patients, please do not disturb if nothing else.\n");
+                        Console.WriteLine("Thank you for coming! Stay safe and healthy!\n");
                         loop = false;
                         break;
                     default:

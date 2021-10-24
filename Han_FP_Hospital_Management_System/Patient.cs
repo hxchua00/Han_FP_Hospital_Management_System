@@ -53,7 +53,7 @@ namespace Han_FP_Hospital_Management_System
 
             Patient newPatient = new Patient()
             {
-                PatientID       = patientcounter,
+                PatientID       = patientcounter + Hospital_Worker.AllPatientInfo.Count,
                 PatientName     = pName,
                 Ethnicity       = pEthnicity,
 
@@ -72,7 +72,7 @@ namespace Han_FP_Hospital_Management_System
 
                 BillPayment = false
             };
-            patientcounter++;
+            //patientcounter++;
             return newPatient;
         }
 	}
