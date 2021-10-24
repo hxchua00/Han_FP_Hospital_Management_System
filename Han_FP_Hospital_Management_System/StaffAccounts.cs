@@ -17,27 +17,23 @@ namespace Han_FP_Hospital_Management_System
         {
             //Adding Admin account details
             string AdminPassword = "Admin123";
-            //var AdminPW_Hasher = new PasswordHasher();
 
             Hospital_Admin AdminAccount = new Hospital_Admin()
             {
                 Name = "Hospital Admin",
                 UniqueID = Guid.NewGuid(),
                 ID = 3001,
-                //HashedPassword = AdminPW_Hasher.HashPassword(AdminPassword),
                 HashedPassword = PasswordCreator.getHashedPassword(AdminPassword)
             };
 
             //Adding Admin account details
             string WorkerPassword = "Worker321";
-           // var WorkerPW_Hasher = new PasswordHasher();
 
             Hospital_Worker WorkerAccount = new Hospital_Worker()
             {
                 Name = "Hospital Worker",
                 UniqueID = Guid.NewGuid(),
                 ID = 1001,
-                //HashedPassword = WorkerPW_Hasher.HashPassword(WorkerPassword),
                 HashedPassword = PasswordCreator.getHashedPassword(WorkerPassword)
             };
 

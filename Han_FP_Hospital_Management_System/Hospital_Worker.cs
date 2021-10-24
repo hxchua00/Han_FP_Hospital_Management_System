@@ -8,8 +8,8 @@ namespace Han_FP_Hospital_Management_System
 {
     class Hospital_Worker : StaffAccounts   
     {
-        public static List<Patient> AllPatientInfo = new List<Patient>();                      //Stores all pateint information
-        public static List<Bill> AllBills = new List<Bill>();                                  //Stores all bills
+        public static List<Patient> AllPatientInfo = new List<Patient>();    //Stores all pateint information
+        public static List<Bill> AllBills = new List<Bill>();                //Stores all bills
 
         public static  Dictionary<int, List<string>> IllnessRecord;          //Keeps a record of all illnees the patient came to the hospital for
         
@@ -18,8 +18,8 @@ namespace Han_FP_Hospital_Management_System
             var patientList = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
             AllPatientInfo.AddRange(patientList);
 
-            //var billList = JsonConvert.DeserializeObject<List<Bill>>(File.ReadAllText("Bills.Json"));
-            //AllBills.AddRange(billList);
+            var billList = JsonConvert.DeserializeObject<List<Bill>>(File.ReadAllText("Bills.Json"));
+            AllBills.AddRange(billList);
 
             IllnessRecord = new Dictionary<int, List<string>>();
         }
@@ -62,68 +62,173 @@ namespace Han_FP_Hospital_Management_System
             newPatient = newPatient.Registration();
             //Add patient info to list
             AllPatientInfo.Add(newPatient);
- 
+
             UpdatePatientJsonFile();
+
+            Console.WriteLine($"Name: {newPatient.PatientName}, ID: {newPatient.PatientID} has been added successfully!\n");
+            Console.WriteLine("If you are a patient, please re-login using the new ID provided for you!\n");
         }
 
         //Admit the patient to the respective department
         //Inclusive of consultation of doctors.
         public void AdmitPatient(int ID)
         {
-            Console.WriteLine("What seems to be the problem?\n");
-            Console.WriteLine("1) Normal Cases(Flu, Cough, Fever, etc");
-            Console.WriteLine("2) Serious Cases (Allergy reaction, Accidents, Emergency)");
-            Console.WriteLine("3) Suspect Internal Injury\n");
+            var lst = new List<string>();
+            while (true)
+            {
+                Console.WriteLine("Enter patient's Symptoms: ");
+                string Symptom = Console.ReadLine();
+                lst.Add(Symptom);
 
-            int issues = Convert.ToInt32(Console.ReadLine());
-            string Dept = "";
-            string status = "";
-            if(issues == 1)
-            {
-                Dept = "OPD";
-                status = "Normal case";
-            }
-            else if (issues == 2)
-            {
-                Dept = "IP";
-                status = "Seruous case";
-            }
-            else if(issues == 3)
-            {
-                Dept = "Radiology";
-                status = "Suspect Internal Injury";
-            }
- 
+                Console.WriteLine();
+                Console.WriteLine("Do you want to add more Symptoms: ");
+                Console.WriteLine("1. Yes");
+                Console.WriteLine("2. No\n");
+                int res = Int32.Parse(Console.ReadLine());
 
+                if (res == 2)
+                {
+                    break;
+                }
+            }
+
+            Console.WriteLine("Which department is the patient admitted to?");
+            Console.WriteLine("1) Outpatient");
+            Console.WriteLine("2) Critical Care");
+            Console.WriteLine("3) A&E");
+            Console.WriteLine("4) Theraphy\n");
+
+            int department = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine();
+            string dept;
+            switch (department)
+            {
+                case 1:
+                    dept = "Outpatient";
+                    break;
+                case 2:
+                    dept = "Critical Care";
+                    break;
+                case 3:
+                    dept = "A&E";
+                    break;
+                case 4:
+                    dept = "Therapy";
+                    break;
+                default:
+                    dept = "";
+                    break;
+            }
+
+            Console.WriteLine("Which ward is the patient admitted to?");
+            Console.WriteLine("1) Class A");
+            Console.WriteLine("2) Class B");
+            Console.WriteLine("3) Class C");
+            Console.WriteLine("4) Private\n");
+
+            int WardClass = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine();
+            string ward;
+            switch (WardClass)
+            {
+                case 1:
+                    ward = "Class A";
+                    break;
+                case 2:
+                    ward = "Class B";
+                    break;
+                case 3:
+                    ward = "Class C";
+                    break;
+                case 4:
+                    ward = "Private";
+                    break;
+                default:
+                    ward = "No ward";
+                    break;
+            }
+
+            var Meds = new List<string>();
+            while (true)
+            {
+                Console.WriteLine("Prescribing medicine to patient: ");
+                Console.WriteLine("1) Paracetamol");
+                Console.WriteLine("2) Antibiotics");
+                Console.WriteLine("3) AntiInflammation");
+                Console.WriteLine("4) Antihistamines");
+                Console.WriteLine("5) Antacids");
+                Console.WriteLine("6) Painkillers");
+
+                int prescribtion = Convert.ToInt32(Console.ReadLine());
+                string medicine = "";
+
+                if(prescribtion == 1)
+                {
+                    medicine = "Paracetamol";
+                    Meds.Add(medicine);
+                }
+                else if (prescribtion == 2)
+                {
+                    medicine = "Antibiotics";
+                    Meds.Add(medicine);
+                }
+                else if (prescribtion == 3)
+                {
+                    medicine = "AntiInflammation";
+                    Meds.Add(medicine);
+                }
+                else if (prescribtion == 4)
+                {
+                    medicine = "Antihistamines";
+                    Meds.Add(medicine);
+                }
+                else if (prescribtion == 5)
+                {
+                    medicine = "Antacids";
+                    Meds.Add(medicine);
+                }
+                else if (prescribtion == 6)
+                {
+                    medicine = "Painkillers";
+                    Meds.Add(medicine);
+                }
+
+                Console.WriteLine();
+                Console.WriteLine("Are there any more medicine to be prescribed?: ");
+                Console.WriteLine("1. Yes");
+                Console.WriteLine("2. No\n");
+                int res = Int32.Parse(Console.ReadLine());
+
+                if (res == 2)
+                {
+                    break;
+                }
+            }
+
+            //Updating the remaining details to Patient's information
             for (int i = 0; i < AllPatientInfo.Count; i++)
             {
                 if(AllPatientInfo[i].PatientID == ID)
                 {
-                    AllPatientInfo[i].Department = Dept;
-                    //AllPatientInfo[i].Status = status;
-
-                    //Adds the illness to the record
-                    //IllnessRecord[AllPatientInfo[i].PatientID] = status;
-                }  
+                    AllPatientInfo[i].ListOfMedicines = Meds;
+                    AllPatientInfo[i].ListOfSymptoms = lst;
+                    AllPatientInfo[i].Department = dept;
+                    AllPatientInfo[i].WardClass = ward;
+                    Console.WriteLine($"{AllPatientInfo[i].PatientName} has been admitted to {dept}.");
+                    if(ward != "No ward")
+                    {
+                        Console.WriteLine($"{AllPatientInfo[i].PatientName} has been admitted to Ward {ward}.\n");
+                    }
+                }
             }
 
             UpdatePatientJsonFile();
-
         }
         
         //Remove Patient from the List, but data still remain for future reference
         public void DischargePatient(int ID)
         {
-            for (int i = 0; i < AllPatientInfo.Count; i++)
-            {
-                if (AllPatientInfo[i].PatientID == ID)
-                {
-                    AllPatientInfo[i].Department = null;
-                    //AllPatientInfo[i].Status = null;
-                }
-            }
-
-            Console.WriteLine($"Patient {ID} has been dischaarged.\n");
+            
             UpdatePatientJsonFile();
         }
 
@@ -138,15 +243,19 @@ namespace Han_FP_Hospital_Management_System
                 {
                     Console.WriteLine($"Patient's ID: {WritePatientInfo[i].PatientID}");
                     Console.WriteLine($"Patient's Name: {WritePatientInfo[i].PatientName}\n");
+
+                    Console.WriteLine($"Ethnicity: {WritePatientInfo[i].Ethnicity}");
                     Console.WriteLine($"Age: {WritePatientInfo[i].PatientAge}");
                     Console.WriteLine($"Weight: {WritePatientInfo[i].PatientWeight}");
                     Console.WriteLine($"Height: {WritePatientInfo[i].PatientHeight}\n");
-                    Console.WriteLine($"Ethnicity: {WritePatientInfo[i].Ethnicity}");
+
                     Console.WriteLine($"Address: {WritePatientInfo[i].Address}");
                     Console.WriteLine($"Contact Number: {WritePatientInfo[i].ContactNum}\n");
+
                     Console.WriteLine($"Doctor In-charge: {WritePatientInfo[i].DoctorInCharge}");
+                    Console.WriteLine($"List of Symptoms: {WritePatientInfo[i].ListOfSymptoms}");
                     Console.WriteLine($"Department: {WritePatientInfo[i].Department}");
-                    //Console.WriteLine($"Status: {WritePatientInfo[i].Status}");
+                    Console.WriteLine($"Ward: {WritePatientInfo[i].WardClass}");
                 }
             } 
         }
@@ -167,62 +276,169 @@ namespace Han_FP_Hospital_Management_System
             return NameOfPatient;
         }
 
-        //Calculate total amount to be paid by patient
-        public double CalculateTotalBill(int ID)
+        public string GetPatientDept(int ID)
         {
-            Bill b = new Bill();
-            double medprice =0, deptprice=0, wardprice=0, totalbill=0;
+            string DeptOfPatient = "";
 
-            Console.WriteLine("Name of medicine: ");
-            string meds = Console.ReadLine();
-            Console.WriteLine("How many night are you warded?");
+            for (int i = 0; i < AllPatientInfo.Count; i++)
+            {
+                if (AllPatientInfo[i].PatientID == ID)
+                {
+                    DeptOfPatient = AllPatientInfo[i].Department;
+                }
+            }
+
+            return DeptOfPatient;
+        }
+
+        public string GetPatientWard(int ID)
+        {
+            string WardOfPatient = "";
+
+            for (int i = 0; i < AllPatientInfo.Count; i++)
+            {
+                if (AllPatientInfo[i].PatientID == ID)
+                {
+                    WardOfPatient = AllPatientInfo[i].WardClass;
+                }
+            }
+
+            return WardOfPatient;
+        }
+
+        public List<string> GetPatientMedicineList(int ID)
+        {
+            var MedList = new List<string>();
+
+            for (int i = 0; i < AllPatientInfo.Count; i++)
+            {
+                if (AllPatientInfo[i].PatientID == ID)
+                {
+                    MedList = AllPatientInfo[i].ListOfMedicines;
+                }
+            }
+
+            return MedList;
+        }
+
+        //Calculate total amount to be paid by patient
+
+        public double GetDepartmentPrice(int ID)
+        {
+            double price = 0;
+            for(int i = 0; i < AllPatientInfo.Count; i++)
+            {
+                if(AllPatientInfo[i].PatientID == ID)
+                {
+                    if(AllPatientInfo[i].Department == "Outpatient")
+                    {
+                        price = 30.00;
+                    }
+                    else if (AllPatientInfo[i].Department == "Critical Care")
+                    {
+                        price = 300.00;
+                    }
+                    else if (AllPatientInfo[i].Department == "A&E")
+                    {
+                        price = 150.00;
+                    }
+                    else if (AllPatientInfo[i].Department == "Therapy")
+                    {
+                        price = 80.00;
+                    }
+                }
+            }
+
+            return price;
+        }
+
+        public double GetWardPrice(int ID)
+        {
+            double price = 0;
+            for (int i = 0; i < AllPatientInfo.Count; i++)
+            {
+                if (AllPatientInfo[i].PatientID == ID)
+                {
+                    if (AllPatientInfo[i].WardClass == "Class A")
+                    {
+                        price = 180.00;
+                    }
+                    else if (AllPatientInfo[i].WardClass == "Class B")
+                    {
+                        price = 150.00;
+                    }
+                    else if (AllPatientInfo[i].WardClass == "Class C")
+                    {
+                        price = 120.00;
+                    }
+                    else if (AllPatientInfo[i].WardClass == "Private")
+                    {
+                        price = 250.00;
+                    }
+                }
+            }
+
+            return price;
+        }
+
+        public double GetMedicinePrice(int ID)
+        {
+            double price = 0;
+            for (int i = 0; i < AllPatientInfo.Count; i++)
+            {
+                if (AllPatientInfo[i].PatientID == ID)
+                {
+                    for (int j = 0; j < AllPatientInfo[i].ListOfMedicines.Count; j++)
+                    {
+                        if (AllPatientInfo[i].ListOfMedicines[j] == "Paracetamol")
+                        {
+                            price += 5.85;
+                        }
+                        else if (AllPatientInfo[i].ListOfMedicines[j] == "Antibiotics")
+                        {
+                            price += 12.40;
+                        }
+                        else if (AllPatientInfo[i].ListOfMedicines[j] == "AntiInflammation")
+                        {
+                            price += 6.75;
+                        }
+                        else if (AllPatientInfo[i].ListOfMedicines[j] == "Antihistamines")
+                        {
+                            price += 15.90;
+                        }
+                        else if (AllPatientInfo[i].ListOfMedicines[j] == "Antacids")
+                        {
+                            price += 4.35;
+                        }
+                        else if (AllPatientInfo[i].ListOfMedicines[j] == "Painkillers")
+                        {
+                            price += 8.50;
+                        }
+                    }             
+                }
+            }
+
+            return price;
+        }
+        public double CalculateTotalBill(int ID)
+        { 
+            Console.WriteLine("How many nights have the patient stayed in the ward?");
+            Console.Write("Answer here: ");
             int nights = Convert.ToInt32(Console.ReadLine());
 
-            foreach (KeyValuePair<string, double> medicine in b.MedicinePrice)
-            {
-                if (medicine.Key == meds)
-                {
-                    medprice = medicine.Value;
-                }
-            }
+            double TotalBill = 0;
+            double FinalBill = 0;
 
-            foreach (KeyValuePair<string, double> dept in b.DepartmentPrice)
-            {
-                foreach(Bill bill in AllBills)
-                {
-                    if(bill.BillID == ID)
-                    {
-                        deptprice = dept.Value;
-                    }
-                }
-            }
+            double DeptPrice = GetDepartmentPrice(ID);
+            double WardPrice = (GetWardPrice(ID) * nights);
+            double MedPrice = GetMedicinePrice(ID);
 
-            foreach (KeyValuePair<string, double> ward in b.WardPrice)
-            {
-                foreach (Bill bill in AllBills)
-                {
-                    if (bill.BillID == ID)
-                    {
-                        if(bill.WardClass == ward.Key)
-                        {
-                            wardprice = ward.Value * nights;
-                        }
-                    }
-                }
-            }
 
-            double priceBeforeTax = medprice + deptprice + wardprice;
 
-            foreach (Bill bill in AllBills)
-            {
-                if (bill.BillID == ID)
-                {
-                    totalbill = priceBeforeTax + (priceBeforeTax * bill.GST) + (priceBeforeTax * bill.Subsidy);
-                }
-            }
+
+
             
-
-            return totalbill;
+            return FinalBill;
         }
 
         public void SettleBill(int ID)
@@ -235,43 +451,19 @@ namespace Han_FP_Hospital_Management_System
         //Creating new bills
         public void GenerateBill(int ID)
         {
-            Hospital_Worker HW = new Hospital_Worker();
-            int BillNum = 0;
-            string Dept = "";
-
             AllBills = JsonConvert.DeserializeObject<List<Bill>>(File.ReadAllText("Bills.Json"));
 
-            string bList = JsonConvert.SerializeObject(AllBills);
-            File.WriteAllText("Bills.Json", bList);
+            string BList = JsonConvert.SerializeObject(AllBills);
+            File.WriteAllText("Bills.Json", BList);
 
-            Console.WriteLine("Any subsidy plans? if yes, how much?");
-            Console.Write("Enter Subsidy amount here (%): ");
-            double Subsidy = Convert.ToDouble(Console.ReadLine());
-
-
-            for (int i = 0; i < AllPatientInfo.Count; i++)
-            {
-                if (AllPatientInfo[i].PatientID == ID)
-                {
-                    Dept = AllPatientInfo[i].Department;
-                    //AllPatientInfo[i].Status = null;
-                }
-            }
-
-            Bill newBill = new Bill()
-            {
-                BillID = BillNum,
-                PatientID = ID,
-                PatientName = HW.GetPatientName(ID),
-                Department = Dept,
-                WardClass = null,
-                GST = 0.07,
-                Subsidy = Subsidy/100,
-                Total = 0,
-            };
-
+            Bill newBill = new Bill();
+            newBill = newBill.CreateNewBill(ID);
+                        
             AllBills.Add(newBill);
             UpdateBillJsonFile();
+
+            Console.WriteLine($"A new bill no. {newBill.BillID} has been credited to patient {newBill.PatientName}");
+            Console.WriteLine("Please pay the bill before you are able to get discharged.\n");
         }
     }
 }

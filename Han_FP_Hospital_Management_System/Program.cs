@@ -7,23 +7,24 @@ namespace Han_FP_Hospital_Management_System
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Welcome to the Hospital");
-            Console.WriteLine();
-            Console.WriteLine("1) Log in");
-            Console.WriteLine("2) Exit\n");
-
-            int Start = Convert.ToInt32(Console.ReadLine());
-            Console.Write($"Chosen option: {Start}\n");
-
             bool cont = true;
             while (cont)
             {
+                Console.WriteLine("Welcome to the Hospital");
+                Console.WriteLine();
+                Console.WriteLine("1) Log in");
+                Console.WriteLine("2) Exit\n");
+
+                int Start = Convert.ToInt32(Console.ReadLine());
+                Console.Write($"Chosen option: {Start}\n");
                 switch (Start)
                 {
                     case 1:
                         Login();
                         break;
                     case 2:
+                        Console.WriteLine("Thank you for using the Hospital Management System!");
+                        Console.WriteLine("Goodbye!\n");
                         Environment.Exit(0);
                         break;
                     default:
@@ -52,10 +53,27 @@ namespace Han_FP_Hospital_Management_System
                     CheckFirstVisit();
                     break;
                 case 2:
-                    ValidateStaffLogin();
+                    Console.WriteLine();
+                    Console.WriteLine("Enter Staff ID: ");
+                    int sID = Convert.ToInt32(Console.ReadLine());
+                    Console.WriteLine();
+
+                    int result = ValidateStaffLogin(sID);
+                    if(result == 1)
+                    {
+                        WorkerMenu(sID);
+                    }
+                    else if(result == 2)
+                    {
+                        AdminMenu(sID);
+                    }
+                    else
+                    {
+                        Console.WriteLine("ID not found! Please enter valid ID.\n");
+                    }
                     break;
                 default:
-                    Console.WriteLine("Invalid option chosen.");
+                    Console.WriteLine("Invalid option chosen.\n");
                     break;
             }
         }
@@ -79,10 +97,9 @@ namespace Han_FP_Hospital_Management_System
             }
             else if(checkVisit == 2)
             {
+                Console.WriteLine();
                 Console.WriteLine("Please enter ID number: ");
                 int input = Convert.ToInt32(Console.ReadLine());
-
-                // PatientMenu(input);
 
                 for (int i = 0; i < Hospital_Worker.AllPatientInfo.Count; i++)
                 {
@@ -91,6 +108,7 @@ namespace Han_FP_Hospital_Management_System
                         Console.WriteLine("Patient found!");
                         Hospital_Worker.AllPatientInfo[i].NumOfVisits++;
                         PatientMenu(input);
+                        break;
                     }
                     else
                     {
@@ -145,16 +163,12 @@ namespace Han_FP_Hospital_Management_System
             } 
         }
 
-        static int ValidateStaffLogin()
+        static int ValidateStaffLogin(int sID)
         {
-           // StaffAccounts SA = new StaffAccounts();
-
-            Console.WriteLine("Enter Staff ID: ");
-            int sID = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine("Enter Staff Password: ");
             string sPassword = Console.ReadLine();
 
-            var Hasher = new PasswordHasher();
+            int result = 0;
 
             for (int i = 0; i < StaffAccounts.StaffAccountList.Count; i++)
             {
@@ -163,27 +177,24 @@ namespace Han_FP_Hospital_Management_System
                     == PasswordVerificationResult.Success)
                 {
                     if (sID == 1001)
-                        WorkerMenu(sID);
+                        result = 1;
                     else if (sID == 3001)
-                        AdminMenu(sID);
-                }
-                else
-                {
-                    Console.WriteLine("Invalid credentials entered.\n");
-                }
+                        result = 2;
+                } 
             }
+            return result;
         }
 
         static void WorkerMenu(int ID)
         {
             Hospital_Worker HW = new Hospital_Worker();
-
+            int patientID;
             bool loop = true;
             while (loop)
             {
                 Console.WriteLine();
-                Console.WriteLine($"Using Account ID: {ID}, Welcome!");
-                Console.WriteLine("Please choose what to do: \n");
+                Console.WriteLine($"Using Account ID: {ID}");
+                Console.WriteLine("Please choose what to do: ");
                 Console.WriteLine("1) Add Patient");
                 Console.WriteLine("2) Find Patient");
                 Console.WriteLine("3) Generate Bill for patient");
@@ -200,14 +211,18 @@ namespace Han_FP_Hospital_Management_System
                         break;
                     case 2:
                         Console.WriteLine("Please enter Patient's ID: \n");
-                        int pID = Convert.ToInt32(Console.ReadLine());
-                        HW.ViewPatientInfo(pID);
+                        patientID = Convert.ToInt32(Console.ReadLine());
+                        HW.ViewPatientInfo(patientID);
                         break;
                     case 3:
-                        HW.GenerateBill(ID);
+                        Console.WriteLine("Enter patient's ID here: ");
+                        patientID = Convert.ToInt32(Console.ReadLine());
+                        HW.GenerateBill(patientID);
                         break;
                     case 4:
-                        HW.DischargePatient(ID);
+                        Console.WriteLine("Enter patient's ID here: ");
+                        patientID = Convert.ToInt32(Console.ReadLine());
+                        HW.DischargePatient(patientID);
                         break;
                     case 5:
                         Console.WriteLine("Taking a break so soon? There's still many things to do.\n");
