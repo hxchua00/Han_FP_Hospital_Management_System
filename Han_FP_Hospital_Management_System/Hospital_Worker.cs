@@ -738,135 +738,330 @@ namespace Han_FP_Hospital_Management_System
             return price;
         }
         public double CalculateTotalBill(int ID)
-        { 
-            Console.WriteLine("How many nights have the patient stayed in the ward?");
-            Console.Write("Answer here: ");
-            int nights = Convert.ToInt32(Console.ReadLine());
-
+        {
             double TotalBill = 0;
             double FinalBill = 0;
-
-            double DeptPrice = GetDepartmentPrice(ID);
-            double WardPrice = (GetWardPrice(ID) * nights);
-            double MedPrice = GetMedicinePrice(ID);
-
-            TotalBill = DeptPrice + WardPrice + MedPrice;
-            double GST = TotalBill * 0.07;
-
-            Console.Write("Enter Subsidy amount here (%): ");
-            double sAmount = Convert.ToDouble(Console.ReadLine());
-            double Subsidised = 0;
-            if (sAmount != 0)
+            try
             {
-                Subsidised = TotalBill * (sAmount / 100);
+                Console.WriteLine("How many nights have the patient stayed in the ward?");
+                Console.Write("Answer here: ");
+                Console.WriteLine();
+
+                int nights = Convert.ToInt32(Console.ReadLine());
+
+                double DeptPrice = GetDepartmentPrice(ID);
+                double WardPrice = (GetWardPrice(ID) * nights);
+                double MedPrice = GetMedicinePrice(ID);
+
+                TotalBill = DeptPrice + WardPrice + MedPrice;
+                double GST = TotalBill * 0.07;
+
+                Console.Write("Enter Subsidy amount here (%): ");
+                double sAmount = Convert.ToDouble(Console.ReadLine());
+                double Subsidised = 0;
+                if (sAmount != 0)
+                {
+                    Subsidised = TotalBill * (sAmount / 100);
+                }
+
+                FinalBill = (TotalBill + GST) - Subsidised;
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Invalid argument!\n");
+            }
+            catch (OverflowException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Overflow detected!\n");
+            }
+            catch (OutOfMemoryException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Not enough memory!\n");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Invalid input format detected!\n");
+            }
+            catch (IOException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! I/O Error has occured!\n");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! An exception has occured! Check your codes again!\n");
             }
 
-            FinalBill = (TotalBill + GST) - Subsidised;
             return FinalBill;
         }
 
         public void SettleBill(int ID)
         {
-            for (int i = 0; i < AllPatientInfo.Count; i++)
+            try
             {
-                if (AllPatientInfo[i].PatientID == ID)
+                for (int i = 0; i < AllPatientInfo.Count; i++)
                 {
-                    if (AllPatientInfo[i].BillPayment == true)
+                    if (AllPatientInfo[i].PatientID == ID)
                     {
-                        Console.WriteLine("You have already paid the bill.");
-                        Console.WriteLine("Please wait to be discharged by the doctor in charge.\n");
-                    }
-                    else
-                    {
-                        for (int j = 0; j < AllBills.Count; j++)
+                        if (AllPatientInfo[i].BillPayment == true)
                         {
-                            if (AllBills[j].PatientID == ID)
-                            {
-                                AllBills[j].Status = "Paid";
-                                AllPatientInfo[i].BillPayment = true;
-
-                                Console.WriteLine();
-                                Console.WriteLine("Thank you for payng the bill!");
-                                Console.WriteLine("Please wait awhile for the payment to go through.");
-                                Console.WriteLine("You will be officially discharged when the doctor says so.\n");
-                            }
-                            else if(j == AllBills.Count-1 && AllBills[j].PatientID != ID)
-                            {
-                                Console.WriteLine("There are no bills to be paid at the moment.\n");
-                            }
+                            Console.WriteLine("You have already paid the bill.");
+                            Console.WriteLine("Please wait to be discharged by the doctor in charge.\n");
                         }
-                        
+                        else
+                        {
+                            for (int j = 0; j < AllBills.Count; j++)
+                            {
+                                if (AllBills[j].PatientID == ID)
+                                {
+                                    AllBills[j].Status = "Paid";
+                                    AllPatientInfo[i].BillPayment = true;
+
+                                    Console.WriteLine();
+                                    Console.WriteLine("Thank you for payng the bill!");
+                                    Console.WriteLine("Please wait awhile for the payment to go through.");
+                                    Console.WriteLine("You will be officially discharged when the doctor says so.\n");
+                                }
+                                else if (j == AllBills.Count - 1 && AllBills[j].PatientID != ID)
+                                {
+                                    Console.WriteLine("There are no bills to be paid at the moment.\n");
+                                }
+                            }
+
+                        }
                     }
                 }
+
+                UpdateBillJsonFile();
+                UpdatePatientJsonFile();
+            }
+            catch (FileLoadException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! File cannot be loaded successfully!\n");
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! File you are trying to access cannot be found!\n");
+            }
+            catch (SecurityException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Security breached!\n");
+            }
+            catch (NotSupportedException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Method is not supported!\n");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Access is unauthorized!\n");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! File not found in specified directory!\n");
+            }
+            catch (PathTooLongException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Length of path or filename is too long!\n");
+            }
+            catch (ArgumentNullException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Null reference pointer detected from given argument!\n");
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Argument provided is invalid!\n");
+            }
+            catch (IOException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! I/O Error has occured! \n");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! An exception has occured! Check your codes again!\n");
             }
 
-            UpdateBillJsonFile();
-            UpdatePatientJsonFile();
         }
 
         //Creating new bills
         public void GenerateBill(int ID)
         {
-            bool CreateBool = false;
-            for(int i = 0; i < AllBills.Count; i++)
+            try
             {
-                if(AllBills[i].PatientID == ID)
+                bool CreateBool = false;
+                for (int i = 0; i < AllBills.Count; i++)
                 {
-                    Console.WriteLine($"There is already a bill created for {AllBills[i].PatientName}\n");
-                    CreateBool = false;
+                    if (AllBills[i].PatientID == ID)
+                    {
+                        Console.WriteLine($"There is already a bill created for {AllBills[i].PatientName}\n");
+                        CreateBool = false;
+                    }
+                    else
+                        CreateBool = true;
+                }
+
+                if (CreateBool == true)
+                {
+                    AllBills = JsonConvert.DeserializeObject<List<Bill>>(File.ReadAllText("Bills.Json"));
+                    string BList = JsonConvert.SerializeObject(AllBills);
+                    File.WriteAllText("Bills.Json", BList);
+
+                    Bill newBill = new Bill();
+                    newBill = newBill.CreateNewBill(ID);
+
+                    AllBills.Add(newBill);
+                    UpdateBillJsonFile();
+
+                    Console.WriteLine($"A new bill no. {newBill.BillID} has been credited to patient {newBill.PatientName}");
+                    Console.WriteLine("Please pay the bill before you are able to get discharged.\n");
                 }
                 else
-                    CreateBool = true;
+                    Console.WriteLine("Unable to crate a new bill right now.\n");
             }
-
-            if (CreateBool == true)
+            catch (FileLoadException)
             {
-                AllBills = JsonConvert.DeserializeObject<List<Bill>>(File.ReadAllText("Bills.Json"));
-                string BList = JsonConvert.SerializeObject(AllBills);
-                File.WriteAllText("Bills.Json", BList);
-
-                Bill newBill = new Bill();
-                newBill = newBill.CreateNewBill(ID);
-
-                AllBills.Add(newBill);
-                UpdateBillJsonFile();
-
-                Console.WriteLine($"A new bill no. {newBill.BillID} has been credited to patient {newBill.PatientName}");
-                Console.WriteLine("Please pay the bill before you are able to get discharged.\n");
+                Console.WriteLine();
+                Console.WriteLine("Error! File cannot be loaded successfully!\n");
             }
-            else
-                Console.WriteLine("Unable to crate a new bill right now.\n");
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! File you are trying to access cannot be found!\n");
+            }
+            catch (SecurityException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Security breached!\n");
+            }
+            catch (NotSupportedException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Method is not supported!\n");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Access is unauthorized!\n");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! File not found in specified directory!\n");
+            }
+            catch (PathTooLongException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Length of path or filename is too long!\n");
+            }
+            catch (ArgumentNullException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Null reference pointer detected from given argument!\n");
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Argument provided is invalid!\n");
+            }
+            catch (IOException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! I/O Error has occured! \n");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! An exception has occured! Check your codes again!\n");
+            }
         }
 
         public void ShowTheBill(int ID)
-        {
-            for (int i = 0; i < AllBills.Count; i++)
+        { 
+            try
             {
-                if(AllBills[i].PatientID == ID)
+                for (int i = 0; i < AllBills.Count; i++)
                 {
-                    Console.WriteLine($"Bill ID: {AllBills[i].BillID}");
-
-                    Console.WriteLine($"Patient ID: {AllBills[i].PatientID}");
-                    Console.WriteLine($"Name: {AllBills[i].PatientName}");
-
-                    Console.WriteLine($"Department: {AllBills[i].Department}");
-                    Console.WriteLine($"Ward: {AllBills[i].WardClass}\n");
-
-                    for (int j = 0; j < AllBills[i].ListOfMedicine.Count; j++)
+                    if (AllBills[i].PatientID == ID)
                     {
-                        Console.WriteLine($"Medicine {j}: {AllBills[i].ListOfMedicine[j]}");
-                    }
+                        Console.WriteLine($"Bill ID: {AllBills[i].BillID}");
 
-                    Console.WriteLine();
-                    Console.WriteLine($"GST Amount: {AllBills[i].GST}");
-                    Console.WriteLine($"Subsidised Amount: {AllBills[i].Subsidy}");
-                    Console.WriteLine($"Total Amount Payable: {AllBills[i].Total}");
-                    Console.WriteLine($"Payment Status: {AllBills[i].Status}\n");
+                        Console.WriteLine($"Patient ID: {AllBills[i].PatientID}");
+                        Console.WriteLine($"Name: {AllBills[i].PatientName}");
+
+                        Console.WriteLine($"Department: {AllBills[i].Department}");
+                        Console.WriteLine($"Ward: {AllBills[i].WardClass}\n");
+
+                        for (int j = 0; j < AllBills[i].ListOfMedicine.Count; j++)
+                        {
+                            Console.WriteLine($"Medicine {j}: {AllBills[i].ListOfMedicine[j]}");
+                        }
+
+                        Console.WriteLine();
+                        Console.WriteLine($"GST Amount: {AllBills[i].GST}");
+                        Console.WriteLine($"Subsidised Amount: {AllBills[i].Subsidy}");
+                        Console.WriteLine($"Total Amount Payable: {AllBills[i].Total}");
+                        Console.WriteLine($"Payment Status: {AllBills[i].Status}\n");
+                    }
+                    else if (AllBills[i].PatientID != ID && i == AllBills.Count - 1)
+                    {
+                        Console.WriteLine("There are currently no bills to be shown.\n");
+                    }
                 }
-                else if (AllBills[i].PatientID != ID && i == AllBills.Count-1)
-                {
-                    Console.WriteLine("There are currently no bills to be shown.\n");
-                }
+            }
+            catch (FileLoadException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! File cannot be loaded successfully!\n");
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! File you are trying to access cannot be found!\n");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! File not found in specified directory!\n");
+            }
+            catch (PathTooLongException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Length of path or filename is too long!\n");
+            }
+            catch (ArgumentNullException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Null reference pointer detected from given argument!\n");
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Argument provided is invalid!\n");
+            }
+            catch (IOException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! I/O Error has occured! \n");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! An exception has occured! Check your codes again!\n");
             }
         }
     }

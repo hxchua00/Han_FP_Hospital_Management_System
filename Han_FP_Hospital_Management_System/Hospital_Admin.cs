@@ -92,30 +92,63 @@ namespace Han_FP_Hospital_Management_System
 
         //Prints total number of bills geneerated
         public void PrintAllBills()
-        {           
-            foreach (Bill b in Hospital_Worker.AllBills)
+        {            
+            try
+            {
+                foreach (Bill b in Hospital_Worker.AllBills)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("==============================\n");
+                    Console.WriteLine($"Bill ID: {b.BillID}");
+
+                    Console.WriteLine($"Patient ID: {b.PatientID}");
+                    Console.WriteLine($"Name: {b.PatientName}");
+
+                    Console.WriteLine($"Department: {b.Department}");
+                    Console.WriteLine($"Ward: {b.WardClass}\n");
+
+                    for (int i = 0; i < b.ListOfMedicine.Count; i++)
+                    {
+                        Console.WriteLine($"Medicine {i + 1}: {b.ListOfMedicine[i]}");
+                    }
+
+                    Console.WriteLine();
+                    Console.WriteLine($"GST Amount: {b.GST}");
+                    Console.WriteLine($"Subsidised Amount: {b.Subsidy}");
+                    Console.WriteLine($"Total Amount Payable: {b.Total}");
+                    Console.WriteLine($"Payment Status: {b.Status}\n");
+                    Console.WriteLine("==============================");
+                }
+            }
+            catch (ArgumentException)
             {
                 Console.WriteLine();
-                Console.WriteLine("==============================\n");
-                Console.WriteLine($"Bill ID: {b.BillID}");
-                
-                Console.WriteLine($"Patient ID: {b.PatientID}");
-                Console.WriteLine($"Name: {b.PatientName}");
-
-                Console.WriteLine($"Department: {b.Department}");
-                Console.WriteLine($"Ward: {b.WardClass}\n");
-
-                for(int i =0; i< b.ListOfMedicine.Count; i++)
-                {
-                    Console.WriteLine($"Medicine {i+1}: {b.ListOfMedicine[i]}");
-                }
-
+                Console.WriteLine("Error! Invalid argument!\n");
+            }
+            catch (OverflowException)
+            {
                 Console.WriteLine();
-                Console.WriteLine($"GST Amount: {b.GST}");
-                Console.WriteLine($"Subsidised Amount: {b.Subsidy}");
-                Console.WriteLine($"Total Amount Payable: {b.Total}");
-                Console.WriteLine($"Payment Status: {b.Status}\n");
-                Console.WriteLine("==============================");
+                Console.WriteLine("Error! Overflow detected!\n");
+            }
+            catch (OutOfMemoryException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Not enough memory!\n");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Invalid input format detected!\n");
+            }
+            catch (IOException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! I/O Error has occured!\n");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! An exception has occured! Check your codes again!\n");
             }
         }
     }

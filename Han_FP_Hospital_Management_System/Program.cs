@@ -325,17 +325,51 @@ namespace Han_FP_Hospital_Management_System
         }
         static bool ValidateStaffLogin(int sID)
         {
-            Console.WriteLine("Enter Staff Password: ");
-            string sPassword = Console.ReadLine();
-
             bool result = false;
-            for (int i = 0; i < UserManager.UserAccounts.Count; i++)
+            try
             {
-                if (UserManager.UserAccounts[i].ID == sID && UserManager.UserAccounts[i].HashedPassword
-                    == UserManager.ComputeSha256Hash(sPassword))
+                Console.WriteLine("Enter Staff Password: ");
+                string sPassword = Console.ReadLine();
+          
+                for (int i = 0; i < UserManager.UserAccounts.Count; i++)
                 {
-                    result = true;
+                    if (UserManager.UserAccounts[i].ID == sID && UserManager.UserAccounts[i].HashedPassword
+                        == UserManager.ComputeSha256Hash(sPassword))
+                    {
+                        result = true;
+                    }
                 }
+
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Invalid argument!\n");
+            }
+            catch (OverflowException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Overflow detected!\n");
+            }
+            catch (OutOfMemoryException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Not enough memory!\n");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Invalid input format detected!\n");
+            }
+            catch (IOException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! I/O Error has occured!\n");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! An exception has occured! Check your codes again!\n");
             }
 
             return result;
