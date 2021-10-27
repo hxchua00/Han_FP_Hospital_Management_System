@@ -337,9 +337,8 @@ namespace Han_FP_Hospital_Management_System
             int result = 0;
             for (int i = 0; i < UserManager.UserAccounts.Count; i++)
             {
-                if (UserManager.UserAccounts[i].ID == sID &&
-                    PasswordCreator.verifyHashedPassword(UserManager.UserAccounts[i].HashedPassword, sPassword)
-                    == PasswordVerificationResult.Success)
+                if (UserManager.UserAccounts[i].ID == sID && UserManager.UserAccounts[i].HashedPassword
+                    == PasswordCreator.ComputeSha256Hash(sPassword))
                 {
                     if (sID == 1000)
                         result = 1;

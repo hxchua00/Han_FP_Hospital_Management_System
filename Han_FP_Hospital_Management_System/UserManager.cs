@@ -16,7 +16,7 @@ namespace Han_FP_Hospital_Management_System
             {
                 Name = "Hospital Admin",
                 ID = 9999,
-                HashedPassword = PasswordCreator.getHashedPassword("Admin123")
+                HashedPassword = PasswordCreator.ComputeSha256Hash("Admin123")
             };
 
             //Adding Admin account details
@@ -24,7 +24,7 @@ namespace Han_FP_Hospital_Management_System
             {
                 Name = "Hospital Worker",
                 ID = 1000,
-                HashedPassword = PasswordCreator.getHashedPassword("Worker321")
+                HashedPassword = PasswordCreator.ComputeSha256Hash("Worker321")
             };
 
             UserAccounts.Add(AdminAccount);

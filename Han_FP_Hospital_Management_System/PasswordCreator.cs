@@ -1,25 +1,27 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using System.Text;
+using Microsoft.AspNet.Identity;
+using System.Security.Cryptography;
 
 namespace Han_FP_Hospital_Management_System
 {
     static class PasswordCreator
     {
-        private static PasswordHasher _workerPW_Hasher;
-
-        static PasswordCreator()
+        public static string ComputeSha256Hash(string rawData)
         {
-            _workerPW_Hasher = new PasswordHasher();
-        }
+            // Create a SHA256   
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
 
-        public static string getHashedPassword(string pwd)
-        {
-            return _workerPW_Hasher.HashPassword(pwd);
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
         }
-
-        public static PasswordVerificationResult verifyHashedPassword(string hashedPwd,string pwd)
-        {
-            return _workerPW_Hasher.VerifyHashedPassword(hashedPwd,pwd);
-        }
-
     }
 }
