@@ -8,11 +8,11 @@ namespace Han_FP_Hospital_Management_System
 {
     class UserManager
     {
-        public static List<Users> UserAccounts = new List<Users>();
+        public static List<User> UserAccounts = new List<User>();
 
         static UserManager()
         {
-            Users AdminAccount = new Users()
+            User AdminAccount = new User()
             {
                 Name = "Hospital Admin",
                 ID = 9999,
@@ -20,7 +20,7 @@ namespace Han_FP_Hospital_Management_System
             };
 
             //Adding Admin account details
-            Users WorkerAccount = new Users()
+            User WorkerAccount = new User()
             {
                 Name = "Hospital Worker",
                 ID = 1000,
@@ -33,7 +33,7 @@ namespace Han_FP_Hospital_Management_System
             string AddAccountToList = JsonConvert.SerializeObject(UserAccounts);
             File.WriteAllText("Staff_Accounts.Json", AddAccountToList);
 
-            List<Users> AccountLists = JsonConvert.DeserializeObject<List<Users>>(File.ReadAllText("Staff_Accounts.Json"));
+            List<User> AccountLists = JsonConvert.DeserializeObject<List<User>>(File.ReadAllText("Staff_Accounts.Json"));
 
             string UserList = JsonConvert.SerializeObject(AccountLists);
             File.WriteAllText("Staff_Accounts.Json", UserList);
