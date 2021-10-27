@@ -52,7 +52,6 @@
     <Compile Include="Bill.cs" />
     <Compile Include="Hospital_Admin.cs" />
     <Compile Include="Hospital_Worker.cs" />
-    <Compile Include="PasswordCreator.cs" />
     <Compile Include="Patient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
