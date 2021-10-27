@@ -7,75 +7,162 @@ namespace Han_FP_Hospital_Management_System
     class Program
     {
         static void Main(string[] args)
-        {
-            bool cont = true;
-            while (cont)
+        {  
+            try
             {
-                Console.WriteLine("Welcome to the Hospital");
-                Console.WriteLine();
-                Console.WriteLine("1) Log in");
-                Console.WriteLine("2) Exit\n");
-
-                int Start = Convert.ToInt32(Console.ReadLine());
-                Console.Write($"Chosen option: {Start}\n");
-                switch (Start)
+                bool cont = true;
+                while (cont)
                 {
-                    case 1:
-                        Login();
-                        break;
-                    case 2:
-                        Console.WriteLine("Thank you for using the Hospital Management System!");
-                        Console.WriteLine("Goodbye!\n");
-                        Environment.Exit(0);
-                        break;
-                    default:
-                        Console.WriteLine("Invalid input. Please select available option.\n");
-                        break;
-                }
-            }
+                    Console.WriteLine("Welcome to the Hospital");
+                    Console.WriteLine();
+                    Console.WriteLine("1) Log in");
+                    Console.WriteLine("2) Exit\n");
 
-            Console.ReadLine();
+                    int Start = Convert.ToInt32(Console.ReadLine());
+                    Console.Write($"Chosen option: {Start}\n");
+
+                    switch (Start)
+                    {
+                        case 1:
+                            Login();
+                            break;
+                        case 2:
+                            Console.WriteLine("Thank you for using the Hospital Management System!");
+                            Console.WriteLine("Goodbye!\n");
+                            Environment.Exit(0);
+                            break;
+                        default:
+                            Console.WriteLine("Invalid input. Please select available option.\n");
+                            break;
+                    }
+                }
+
+                Console.ReadLine();
+            }
+            catch (MethodAccessException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! You do not have permission to access the current method!\n");
+            }
+            catch (MissingMethodException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! The method you are trying to access cannot be found!\n");
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Invalid argument!\n");
+            }
+            catch (OverflowException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Overflow detected!\n");
+            }
+            catch (OutOfMemoryException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Not enough memory!\n");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Invalid input format detected!\n");
+            }
+            catch (IOException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! I/O Error has occured!\n");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! An exception has occured! Check your codes again!\n");
+            }
         }
 
         //Start of the system, Login Page - Display different menu according to different users
         static void Login()
         {
-            Console.WriteLine();
-            Console.WriteLine("Pick your account type: ");
-            Console.WriteLine("1) Patient");
-            Console.WriteLine("2) Staff\n");
-
-            int accType = Convert.ToInt32(Console.ReadLine());
-            Console.Write($"Chosen option: {accType}\n");
-
-            switch (accType)
+            try
             {
-                case 1:
-                    CheckFirstVisit();
-                    break;
-                case 2:
-                    Console.WriteLine();
-                    Console.WriteLine("Enter Staff ID: ");
-                    int sID = Convert.ToInt32(Console.ReadLine());
-                    Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("Pick your account type: ");
+                Console.WriteLine("1) Patient");
+                Console.WriteLine("2) Staff\n");
 
-                    int result = ValidateStaffLogin(sID);
-                    if(result == 1)
-                    {
-                        WorkerMenu(sID);
-                    }
-                    else if(result == 2)
-                    {
-                        AdminMenu(sID);
-                    }
-                    else
-                    {
-                        Console.WriteLine("ID not found! Please enter valid ID.\n");
-                    }
-                    break;
-                default:
-                    Console.WriteLine("Invalid option chosen.\n");
-                    break;
+                int accType = Convert.ToInt32(Console.ReadLine());
+                Console.Write($"Chosen option: {accType}\n");
+
+                switch (accType)
+                {
+                    case 1:
+                        CheckFirstVisit();
+                        break;
+                    case 2:
+                        Console.WriteLine();
+                        Console.WriteLine("Enter Staff ID: ");
+                        int sID = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine();
+
+                        int result = ValidateStaffLogin(sID);
+                        if (result == 1)
+                        {
+                            WorkerMenu(sID);
+                        }
+                        else if (result == 2)
+                        {
+                            AdminMenu(sID);
+                        }
+                        else
+                        {
+                            Console.WriteLine("ID not found! Please enter valid ID.\n");
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option chosen.\n");
+                        break;
+                }
+            }
+            catch (MethodAccessException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! You do not have permission to access the current method!\n");
+            }
+            catch (MissingMethodException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! The method you are trying to access cannot be found!\n");
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Invalid argument!\n");
+            }
+            catch (OverflowException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Overflow detected!\n");
+            }
+            catch (OutOfMemoryException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Not enough memory!\n");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! Invalid input format detected!\n");
+            }
+            catch (IOException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! I/O Error has occured!\n");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error! An exception has occured! Check your codes again!\n");
             }
         }
 
@@ -248,10 +335,10 @@ namespace Han_FP_Hospital_Management_System
             string sPassword = Console.ReadLine();
 
             int result = 0;
-            for (int i = 0; i < StaffAccounts.StaffAccountList.Count; i++)
+            for (int i = 0; i < UserManager.UserAccounts.Count; i++)
             {
-                if (StaffAccounts.StaffAccountList[i].ID == sID &&
-                    PasswordCreator.verifyHashedPassword(StaffAccounts.StaffAccountList[i].HashedPassword, sPassword)
+                if (UserManager.UserAccounts[i].ID == sID &&
+                    PasswordCreator.verifyHashedPassword(UserManager.UserAccounts[i].HashedPassword, sPassword)
                     == PasswordVerificationResult.Success)
                 {
                     if (sID == 1001)
@@ -265,12 +352,13 @@ namespace Han_FP_Hospital_Management_System
         }
 
         static void WorkerMenu(int ID)
-        {
-            Hospital_Worker HW = new Hospital_Worker();
-            int patientID;
-            bool loop = true;
+        {            
             try
             {
+                Hospital_Worker HW = new Hospital_Worker();
+                int patientID;
+                bool loop = true;
+
                 while (loop)
                 {
                     Console.WriteLine();
@@ -358,12 +446,11 @@ namespace Han_FP_Hospital_Management_System
         }
         static void AdminMenu(int ID)
         {
-            Hospital_Admin HA = new Hospital_Admin();
-
-            bool loop = true;
-
             try
             {
+                Hospital_Admin HA = new Hospital_Admin();
+                bool loop = true;
+
                 while (loop)
                 {
                     Console.WriteLine();
