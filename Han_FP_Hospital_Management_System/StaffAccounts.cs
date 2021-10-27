@@ -41,13 +41,48 @@ namespace Han_FP_Hospital_Management_System
             StaffAccountList.Add(AdminAccount);
             StaffAccountList.Add(WorkerAccount);
 
-            string AddAccountToList = JsonConvert.SerializeObject(StaffAccountList);
-            File.WriteAllText("Staff_Accounts.Json",AddAccountToList);
+            try
+            {
+                string AddAccountToList = JsonConvert.SerializeObject(StaffAccountList);
+                File.WriteAllText("Staff_Accounts.Json", AddAccountToList);
 
-            List<StaffAccounts> AccountLists = JsonConvert.DeserializeObject<List<StaffAccounts>>(File.ReadAllText("Staff_Accounts.Json"));
+                List<StaffAccounts> AccountLists = JsonConvert.DeserializeObject<List<StaffAccounts>>(File.ReadAllText("Staff_Accounts.Json"));
 
-            string SAList = JsonConvert.SerializeObject(AccountLists);
-            File.WriteAllText("Staff_Accounts.Json", SAList);
+                string SAList = JsonConvert.SerializeObject(AccountLists);
+                File.WriteAllText("Staff_Accounts.Json", SAList);
+            }
+            catch (NotSupportedException)
+            {
+                Console.WriteLine("Error! Method is not supported!\n");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Console.WriteLine("Error! Access is unauthorized!\n");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Console.WriteLine("Error! File not found in specified directory!\n");
+            }
+            catch (PathTooLongException)
+            {
+                Console.WriteLine("Error! Length of path or filename is too long!\n");
+            }
+            catch (ArgumentNullException)
+            {
+                Console.WriteLine("Error! Null reference pointer detected from given argument!\n");
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine("Error! Argument provided is invalid!\n");
+            }
+            catch (IOException)
+            {
+                Console.WriteLine("Error! I/O Error has occured! \n");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error! An exception has occured! Check your codes again!\n");
+            }  
         }
     }
 }

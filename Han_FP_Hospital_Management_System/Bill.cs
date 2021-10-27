@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Han_FP_Hospital_Management_System
 {
@@ -22,10 +18,6 @@ namespace Han_FP_Hospital_Management_System
     
         public double Total { get; set; }           
 
-        public Dictionary<string, double> MedicinePrice = new Dictionary<string, double>();    //Price of medicine
-        public Dictionary<string, double> DepartmentPrice = new Dictionary<string, double>();  //Price of each department's consultant 
-        public Dictionary<string, double> WardPrice = new Dictionary<string, double>();        //Price of each different class wards, per night
-
         public static int BillNum = 1;
         Hospital_Worker HW;
 
@@ -38,7 +30,7 @@ namespace Han_FP_Hospital_Management_System
         {
             Bill newBill = new Bill()
             {
-                BillID = BillNum,
+                BillID = BillNum + Hospital_Worker.AllBills.Count,
                 PatientID = ID,
                 PatientName = HW.GetPatientName(ID),
                 Department = HW.GetPatientDept(ID),

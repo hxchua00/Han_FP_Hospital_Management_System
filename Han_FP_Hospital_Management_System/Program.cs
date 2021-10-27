@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.AspNet.Identity;
-using System.IO;
-using Newtonsoft.Json;
 
 namespace Han_FP_Hospital_Management_System
 {
@@ -112,6 +109,12 @@ namespace Han_FP_Hospital_Management_System
                         Hospital_Worker.AllPatientInfo[i].NumOfVisits++;
                         PatientMenu(input);
                         break;
+                    }
+
+                    if(i == Hospital_Worker.AllPatientInfo.Count -1 && Hospital_Worker.AllPatientInfo[i].PatientID != input)
+                    {
+                        Console.WriteLine("Patient ID not found!");
+                        Console.WriteLine("Please enter valid Patient ID!\n");
                     }
                 }
             }

@@ -34,6 +34,7 @@ namespace Han_FP_Hospital_Management_System
             string bList = JsonConvert.SerializeObject(BillList);
             File.WriteAllText("Bills.Json", bList);
         }
+
         //Updates Patient Information
         public void UpdatePatientJsonFile()
         {
@@ -41,11 +42,21 @@ namespace Han_FP_Hospital_Management_System
             string CreatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
             File.WriteAllText("Patient_Information.Json", CreatePatientJson);
 
-            List<Patient> PatientList = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
+            List<Patient> OldPatientList = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
 
-            string pList = JsonConvert.SerializeObject(PatientList);
+            string pList = JsonConvert.SerializeObject(OldPatientList);
             File.WriteAllText("Patient_Information.Json", pList);
 
+        }
+        public void UpdatePastPatientRecordsJsonFile()
+        {
+            string PastRecordJson = JsonConvert.SerializeObject(AllPatientInfo);
+            File.WriteAllText("Patient_Past_Records.Json", PastRecordJson);
+
+            List<Patient> PastPatientRecords = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Past_Records.Json"));
+
+            string pList = JsonConvert.SerializeObject(PastPatientRecords);
+            File.WriteAllText("Patient_Past_Records.Json", pList);
         }
 
         //Add new patient to database
@@ -238,25 +249,17 @@ namespace Han_FP_Hospital_Management_System
         //Remove Patient from the List, but data still remain for future reference
         public void DischargePatient(int ID)
         {
-            Patient oldPatient;
             for(int i=0; i < AllPatientInfo.Count; i++)
             {
                 if(AllPatientInfo[i].PatientID == ID)
                 {
                     AllPatientInfo[i].Department = "Discharged";
-                    AllPatientInfo[i].WardClass = "Discharged";
-
-                    oldPatient = AllPatientInfo[i];
+                    AllPatientInfo[i].WardClass = "Discharged"; 
                 }
             }
 
-            string PastRecordJson = JsonConvert.SerializeObject(AllPatientInfo);
-            File.WriteAllText("Patient_Past_Records.Json", PastRecordJson);
-
-            List<Patient> PastPatientRecords = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Past_Records.Json"));
-
-            string pList = JsonConvert.SerializeObject(PastPatientRecords);
-            File.WriteAllText("Patient_Past_Records.Json", pList);
+            UpdatePastPatientRecordsJsonFile();
+            UpdatePatientJsonFile();
 
         }
 
@@ -286,13 +289,16 @@ namespace Han_FP_Hospital_Management_System
 
                     for (int j = 0; j< WritePatientInfo[i].ListOfSymptoms.Count;j++)
                     {
-                        Console.WriteLine($"Symptom {j}: {WritePatientInfo[i].ListOfSymptoms[j]}");
+                        Console.WriteLine($"Symptom {j+1}: {WritePatientInfo[i].ListOfSymptoms[j]}");
                     }
+
+                    Console.WriteLine();
 
                     for (int j = 0; j < WritePatientInfo[i].ListOfMedicines.Count; j++)
                     {
-                        Console.WriteLine($"Prescribed medicine {j}: {WritePatientInfo[i].ListOfMedicines[j]}\n");
+                        Console.WriteLine($"Prescribed medicine {j+1}: {WritePatientInfo[i].ListOfMedicines[j]}");
                     }
+                    Console.WriteLine();
                 }
             } 
         }
@@ -388,7 +394,7 @@ namespace Han_FP_Hospital_Management_System
 
             return price;
         }
-
+            
         public double GetWardPrice(int ID)
         {
             double price = 0;
@@ -487,37 +493,41 @@ namespace Han_FP_Hospital_Management_System
 
         public void SettleBill(int ID)
         {
-            Console.WriteLine("Would you like to pay the bill now?");
-            Console.WriteLine("1) Yes");
-            Console.WriteLine("2) No\n");
-
-            int paythebill = Convert.ToInt32(Console.ReadLine());
-            if(paythebill == 1)
+            for (int i = 0; i < AllPatientInfo.Count; i++)
             {
-                for (int i = 0; i < AllPatientInfo.Count; i++)
+                if (AllPatientInfo[i].PatientID == ID)
                 {
-                    if (AllPatientInfo[i].PatientID == ID)
+                    if (AllPatientInfo[i].BillPayment == true)
                     {
-                        if(AllPatientInfo[i].BillPayment == true)
-                        {
-                            Console.WriteLine("You have no bill to pay!\n");
-                        }
-                        else
-                        {      
-                            for (int j = 0; j < AllBills.Count; j++)
-                            {
-                                if (AllBills[j].PatientID == ID)
-                                    AllBills[j].Status = "Paid";
-                            }
-                            AllPatientInfo[i].BillPayment = true;
-                            Console.WriteLine();
-                            Console.WriteLine("Thank you for payng the bill!");
-                            Console.WriteLine("Please wait awhile for the payment to go through.");
-                            Console.WriteLine("Then you will be officially discharged when the doctor says so.\n");
-                        }
+                        Console.WriteLine("You have already finished paying for the bill.");
+                        Console.WriteLine("Please wait to be discharged from the doctor in charge.\n");
                     }
-                } 
+                    else
+                    {
+                        for (int j = 0; j < AllBills.Count; j++)
+                        {
+                            if (AllBills[j].PatientID == ID)
+                            {
+                                AllBills[j].Status = "Paid";
+                                AllPatientInfo[i].BillPayment = true;
+
+                                Console.WriteLine();
+                                Console.WriteLine("Thank you for payng the bill!");
+                                Console.WriteLine("Please wait awhile for the payment to go through.");
+                                Console.WriteLine("Then you will be officially discharged when the doctor says so.\n");
+                            }
+                            else if(j == AllBills.Count-1 && AllBills[j].PatientID != ID)
+                            {
+                                Console.WriteLine("There are no bills to be paid at the moment.\n");
+                            }
+                        }
+                        
+                    }
+                }
             }
+
+            UpdateBillJsonFile();
+            UpdatePatientJsonFile();
         }
 
         //Creating new bills

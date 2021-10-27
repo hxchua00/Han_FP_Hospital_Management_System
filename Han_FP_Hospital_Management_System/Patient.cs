@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Han_FP_Hospital_Management_System
 {
@@ -32,47 +33,77 @@ namespace Han_FP_Hospital_Management_System
 
 		public Patient Registration()
         {
-            Console.WriteLine("Enter patient's Name: ");
-            string pName = Console.ReadLine();
-            Console.WriteLine("Enter patient's Age: ");
-            int pAge = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Enter patient's Weight (in KG): ");
-            double pWeight = Convert.ToDouble(Console.ReadLine());
-            Console.WriteLine("Enter patient's Height (in CM): ");
-            double pHeight = Convert.ToDouble(Console.ReadLine());
-            Console.WriteLine("Enter patient's Ethnicity: ");
-            string pEthnicity = Console.ReadLine();
-            Console.WriteLine("Enter patient's Address: ");
-            string pAddress = Console.ReadLine();
-            Console.WriteLine("Enter patient's Contact Number: ");
-            int pContactNum = Convert.ToInt32(Console.ReadLine());
+            string pName = "", pEthnicity = "", pAddress = "";
+            int pAge = 0, pContactNum = 0, DocInCharge = 0;
+            double pWeight = 0, pHeight = 0;
 
-            Console.WriteLine();
+            try
+            {
+                Console.WriteLine("Enter patient's Name: ");
+                pName = Console.ReadLine();
+                Console.WriteLine("Enter patient's Age: ");
+                pAge = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Enter patient's Weight (in KG): ");
+                pWeight = Convert.ToDouble(Console.ReadLine());
+                Console.WriteLine("Enter patient's Height (in CM): ");
+                pHeight = Convert.ToDouble(Console.ReadLine());
+                Console.WriteLine("Enter patient's Ethnicity: ");
+                pEthnicity = Console.ReadLine();
+                Console.WriteLine("Enter patient's Address: ");
+                pAddress = Console.ReadLine();
+                Console.WriteLine("Enter patient's Contact Number: ");
+                pContactNum = Convert.ToInt32(Console.ReadLine());
 
-            int DocInCharge = rand.Next(0, 5);
-
+                DocInCharge = rand.Next(0, 5);
+                Console.WriteLine();
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                Console.WriteLine("Error! Provided input is out of range!\n");
+            }
+            catch (OverflowException)
+            {
+                Console.WriteLine("Error! Overflow detected!\n");
+            }
+            catch (OutOfMemoryException)
+            {
+                Console.WriteLine("Error! Not enough memory!\n");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Error! Invalid input format detected!\n");
+            }
+            catch (IOException)
+            {
+                Console.WriteLine("Error! I/O Error has occured!\n");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error! An exception has occured! Check your codes again!\n");
+            }
+           
             Patient newPatient = new Patient()
             {
-                PatientID       = patientcounter + Hospital_Worker.AllPatientInfo.Count,
-                PatientName     = pName,
-                Ethnicity       = pEthnicity,
+                PatientID = patientcounter + Hospital_Worker.AllPatientInfo.Count,
+                PatientName = pName,
+                Ethnicity = pEthnicity,
 
-                PatientAge      = pAge,
-                PatientWeight   = pWeight,
-                PatientHeight   = pHeight,
+                PatientAge = pAge,
+                PatientWeight = pWeight,
+                PatientHeight = pHeight,
 
-                Address         = pAddress,
-                ContactNum      = pContactNum,
+                Address = pAddress,
+                ContactNum = pContactNum,
 
                 DoctorInCharge = Doctors[DocInCharge],
                 Department = null,
                 WardClass = null,
-                ListOfSymptoms = null,  
+                ListOfSymptoms = null,
                 ListOfMedicines = null,
 
                 BillPayment = false
             };
-            //patientcounter++;
+
             return newPatient;
         }
 	}

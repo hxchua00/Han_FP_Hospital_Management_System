@@ -25,7 +25,6 @@ namespace Han_FP_Hospital_Management_System
                 }
             }
 
-            Console.WriteLine();
             Console.WriteLine("All Patient in Critical Care: \n");
             for (int i = 0; i < Hospital_Worker.AllPatientInfo.Count; i++)
             {
@@ -73,7 +72,7 @@ namespace Han_FP_Hospital_Management_System
 
                 for(int i =0; i< b.ListOfMedicine.Count; i++)
                 {
-                    Console.WriteLine($"Medicine {i}: {b.ListOfMedicine[i]}");
+                    Console.WriteLine($"Medicine {i+1}: {b.ListOfMedicine[i]}");
                 }
 
                 Console.WriteLine();
