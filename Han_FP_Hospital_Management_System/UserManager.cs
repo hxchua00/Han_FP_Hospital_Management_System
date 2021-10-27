@@ -12,9 +12,6 @@ namespace Han_FP_Hospital_Management_System
 
         static UserManager()
         {
-            Users newUser = new Users();
-            UserAccounts.Add(newUser);
-
             string AddAccountToList = JsonConvert.SerializeObject(UserAccounts);
             File.WriteAllText("Staff_Accounts.Json", AddAccountToList);
 

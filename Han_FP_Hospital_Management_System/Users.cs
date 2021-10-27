@@ -8,12 +8,12 @@ namespace Han_FP_Hospital_Management_System
         public int ID { get; set; }
         public string HashedPassword { get; set; }
 
-        Hospital_Admin HA;
-        Hospital_Worker HW;
+        Hospital_Admin AdminAccount;
+        Hospital_Worker WorkerAccount;
 
         public Users()
         {
-            Hospital_Admin AdminAccount = new Hospital_Admin()
+            AdminAccount = new Hospital_Admin()
             {
                 Name = "Hospital Admin",
                 ID = 9999,
@@ -21,12 +21,15 @@ namespace Han_FP_Hospital_Management_System
             };
 
             //Adding Admin account details
-            Hospital_Worker WorkerAccount = new Hospital_Worker()
+            WorkerAccount = new Hospital_Worker()
             {
                 Name = "Hospital Worker",
                 ID = 1000,
                 HashedPassword = PasswordCreator.getHashedPassword("Worker321")
             };
+
+            UserManager.UserAccounts.Add(AdminAccount);
+            UserManager.UserAccounts.Add(WorkerAccount);
         }
     }
 }
