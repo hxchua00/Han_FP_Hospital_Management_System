@@ -105,18 +105,13 @@ namespace Han_FP_Hospital_Management_System
                         int sID = Convert.ToInt32(Console.ReadLine());
                         Console.WriteLine();
 
-                        int result = ValidateStaffLogin(sID);
-                        if (result == 1)
+                        bool result = ValidateStaffLogin(sID);
+                        if (result == true)
                         {
-                            WorkerMenu(sID);
-                        }
-                        else if (result == 2)
-                        {
-                            AdminMenu(sID);
-                        }
-                        else
-                        {
-                            Console.WriteLine("ID not found! Please enter valid ID.\n");
+                            if (sID == 1000)
+                                WorkerMenu(sID);
+                            else if (sID == 9999)
+                                AdminMenu(sID);
                         }
                         break;
                     default:
@@ -328,22 +323,18 @@ namespace Han_FP_Hospital_Management_System
                 Console.WriteLine("Error! An exception has occured! Check your codes again!\n");
             }
         }
-
-        static int ValidateStaffLogin(int sID)
+        static bool ValidateStaffLogin(int sID)
         {
             Console.WriteLine("Enter Staff Password: ");
             string sPassword = Console.ReadLine();
 
-            int result = 0;
+            bool result = false;
             for (int i = 0; i < UserManager.UserAccounts.Count; i++)
             {
                 if (UserManager.UserAccounts[i].ID == sID && UserManager.UserAccounts[i].HashedPassword
                     == UserManager.ComputeSha256Hash(sPassword))
                 {
-                    if (sID == 1000)
-                        result = 1;
-                    else if (sID == 9999)
-                        result = 2;
+                    result = true;
                 }
             }
 
