@@ -6,7 +6,7 @@ using System.Security;
 
 namespace Han_FP_Hospital_Management_System
 {
-    class UserManager : Users
+    class UserManager
     {
         public static List<Users> UserAccounts = new List<Users>();
 

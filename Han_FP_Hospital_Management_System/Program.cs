@@ -341,9 +341,9 @@ namespace Han_FP_Hospital_Management_System
                     PasswordCreator.verifyHashedPassword(UserManager.UserAccounts[i].HashedPassword, sPassword)
                     == PasswordVerificationResult.Success)
                 {
-                    if (sID == 1001)
+                    if (sID == 1000)
                         result = 1;
-                    else if (sID == 3001)
+                    else if (sID == 9999)
                         result = 2;
                 }
             }

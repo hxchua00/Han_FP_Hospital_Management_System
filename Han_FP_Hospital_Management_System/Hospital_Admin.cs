@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Han_FP_Hospital_Management_System
 {
-    class Hospital_Admin : Users
+    class Hospital_Admin
     {
         Hospital_Worker HW;
         public Hospital_Admin()

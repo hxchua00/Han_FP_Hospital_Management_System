@@ -12,12 +12,5 @@ namespace Han_FP_Hospital_Management_System
         {
             
         }
-
-        public Users(string Name, int ID, string HashedPassword)
-        {
-            this.Name = Name;
-            this.ID = ID;
-            this.HashedPassword = HashedPassword;
-        }
     }
 }

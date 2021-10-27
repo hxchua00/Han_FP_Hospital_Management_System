@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Han_FP_Hospital_Management_System
 {
-    class Hospital_Worker : Users
+    class Hospital_Worker
     {
         public static List<Patient> AllPatientInfo = new List<Patient>();    //Stores all pateint information
         public static List<Bill> AllBills = new List<Bill>();                //Stores all bills
