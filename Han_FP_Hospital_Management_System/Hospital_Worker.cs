@@ -16,6 +16,18 @@ namespace Han_FP_Hospital_Management_System
         
         static Hospital_Worker() 
         {
+            if (!File.Exists("Patient_Information.Json"))
+            {
+                string CreatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
+                File.WriteAllText("Patient_Information.Json", CreatePatientJson);
+            }
+
+            if (!File.Exists("Bills.Json"))
+            {
+                string CreateBillJson = JsonConvert.SerializeObject(AllBills);
+                File.WriteAllText("Bills.Json", CreateBillJson);
+            }
+
             var patientList = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
             AllPatientInfo.AddRange(patientList);
 
@@ -48,16 +60,6 @@ namespace Han_FP_Hospital_Management_System
             File.WriteAllText("Patient_Information.Json", pList);
 
         }
-        public void UpdatePastPatientRecordsJsonFile()
-        {
-            string PastRecordJson = JsonConvert.SerializeObject(AllPatientInfo);
-            File.WriteAllText("Patient_Past_Records.Json", PastRecordJson);
-
-            List<Patient> PastPatientRecords = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Past_Records.Json"));
-
-            string pList = JsonConvert.SerializeObject(PastPatientRecords);
-            File.WriteAllText("Patient_Past_Records.Json", pList);
-        }
 
         //Add new patient to database
         public void AddPatient()
@@ -71,12 +73,17 @@ namespace Han_FP_Hospital_Management_System
 
             newPatient = newPatient.Registration();
             //Add patient info to list
-            AllPatientInfo.Add(newPatient);
+            if (newPatient != null)
+            {
+                AllPatientInfo.Add(newPatient);
 
-            UpdatePatientJsonFile();
-
-            Console.WriteLine($"Name: {newPatient.PatientName}, ID: {newPatient.PatientID} has been added successfully!\n");
-            Console.WriteLine("If you are a patient, please re-login using the new ID provided for you!\n");
+                Console.WriteLine($"Name: {newPatient.PatientName}, ID: {newPatient.PatientID} has been added successfully!\n");
+                Console.WriteLine("If you are a patient, please re-login using the new ID provided for you!\n");
+            }
+            else
+                Console.WriteLine("Registering of new patient failed. Please try again.\n");
+                
+            UpdatePatientJsonFile();  
         }
 
         //Admit the patient to the respective department
@@ -258,7 +265,6 @@ namespace Han_FP_Hospital_Management_System
                 }
             }
 
-            UpdatePastPatientRecordsJsonFile();
             UpdatePatientJsonFile();
 
         }

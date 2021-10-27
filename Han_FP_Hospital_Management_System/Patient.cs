@@ -57,29 +57,41 @@ namespace Han_FP_Hospital_Management_System
                 DocInCharge = rand.Next(0, 5);
                 Console.WriteLine();
             }
-            catch (ArgumentOutOfRangeException)
+            catch (ArgumentException)
             {
-                Console.WriteLine("Error! Provided input is out of range!\n");
+                Console.WriteLine();
+                Console.WriteLine("Error! Invalid argument!\n");
+                return null;
             }
             catch (OverflowException)
             {
+                Console.WriteLine();
                 Console.WriteLine("Error! Overflow detected!\n");
+                return null;
             }
             catch (OutOfMemoryException)
             {
+                Console.WriteLine();
                 Console.WriteLine("Error! Not enough memory!\n");
+                return null;
             }
             catch (FormatException)
             {
+                Console.WriteLine();
                 Console.WriteLine("Error! Invalid input format detected!\n");
+                return null;
             }
             catch (IOException)
             {
+                Console.WriteLine();
                 Console.WriteLine("Error! I/O Error has occured!\n");
+                return null;
             }
             catch (Exception)
             {
+                Console.WriteLine();
                 Console.WriteLine("Error! An exception has occured! Check your codes again!\n");
+                return null;
             }
            
             Patient newPatient = new Patient()
