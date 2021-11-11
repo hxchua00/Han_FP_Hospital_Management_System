@@ -502,13 +502,17 @@ namespace Han_FP_Hospital_Management_System
                             }
                             else
                             {
+                                Console.WriteLine($"Patient's Bill ID for this visit is, {BillID}.");
+                                Console.WriteLine($"Use this ID to pay your bills, or else you won't be discharged.\n");
+
                                 PatientVisitRecord newRecord = new PatientVisitRecord(DocInCharge, department, ward, duration, Symptoms, Medicines, newBill);
                                 hospitalManager.AdmitPatient(ID, newRecord);
                             }
-
                             break;
                         case 2:
-                            hospitalManager.SettleBill(ID);
+                            Console.WriteLine("Enter bill ID to settle bill: ");
+                            int billID = Convert.ToInt32(Console.ReadLine());
+                            hospitalManager.SettleBill(ID, billID);
                             break;
                         case 3:
                             Console.WriteLine("Thank you for coming! Stay safe and healthy!\n");
@@ -608,7 +612,9 @@ namespace Han_FP_Hospital_Management_System
                         case 4:
                             Console.WriteLine("Enter patient's ID here: ");
                             patientID = Convert.ToInt32(Console.ReadLine());
-                            hospitalManager.DischargePatient(patientID);
+                            Console.WriteLine("Enter Bill ID for this visit: ");
+                            int billID = Convert.ToInt32(Console.ReadLine());
+                            hospitalManager.DischargePatient(patientID,billID);
                             break;
                         case 5:
                             Console.WriteLine("Taking a break so soon? There's still many things to do.\n");

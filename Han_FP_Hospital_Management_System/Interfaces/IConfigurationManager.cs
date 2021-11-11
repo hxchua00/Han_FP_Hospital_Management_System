@@ -9,5 +9,6 @@ namespace Han_FP_Hospital_Management_System
         int TotalBillCounter { get; }
         double Gst { get; }
         void IncreatementTotalPatientCounter();
+        void IncreatementTotaBillCounter();
     }
 }

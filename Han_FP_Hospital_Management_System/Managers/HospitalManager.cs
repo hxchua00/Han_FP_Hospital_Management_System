@@ -10,7 +10,6 @@ namespace Han_FP_Hospital_Management_System
     class HospitalManager : IHospitalManager
     {
         private List<Patient> AllPatientInfo = new List<Patient>();                                 //Stores all pateint information
-        private Dictionary<int, List<string>> SymptomsRecord = new Dictionary<int, List<string>>();  //Stores records of all symptoms
         private IConfigurationManager _config;
 
         public HospitalManager(IConfigurationManager configuration)
@@ -28,21 +27,8 @@ namespace Han_FP_Hospital_Management_System
             AllPatientInfo.AddRange(patientList);
         }
 
-        public void UpdatePatientJsonFile()
-        {
-            //Update new information about patients
-            string CreatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
-            File.WriteAllText("Patient_Information.Json", CreatePatientJson);
-
-            List<Patient> OldPatientList = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
-
-            string pList = JsonConvert.SerializeObject(OldPatientList);
-            File.WriteAllText("Patient_Information.Json", pList);
-
-        }
-
         //Add new patient to database
-        public void AddPatient(Patient p)
+        public void AddPatient(Patient patient)
         {
             try
             {
@@ -52,17 +38,20 @@ namespace Han_FP_Hospital_Management_System
                 File.WriteAllText("Patient_Information.Json", pList);
 
                 //Add patient info to list
-                if (p != null)
+                if (patient != null)
                 {
-                    AllPatientInfo.Add(p);
+                    AllPatientInfo.Add(patient);
+                    _config.IncreatementTotalPatientCounter();
+                    _config.IncreatementTotaBillCounter();
 
-                    Console.WriteLine($"Name: {p.PatientName}, ID: {p.PatientID} has been added successfully!\n");
+                    Console.WriteLine($"Name: {patient.PatientName}, ID: {patient.PatientID} has been added successfully!\n");
                     Console.WriteLine("If you are a patient, please re-login using the new ID provided for you!\n");
                 }
                 else
                     Console.WriteLine("Registering of new patient failed. Please try again.\n");
 
-                UpdatePatientJsonFile();
+                string UpdatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
+                File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
             }
             catch (FileLoadException)
             {
@@ -129,7 +118,9 @@ namespace Han_FP_Hospital_Management_System
             {
                 Patient patientToAdmit = AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault();
                 patientToAdmit.VisitHistory.Add(visitRecord);
-                UpdatePatientJsonFile();
+
+                string UpdatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
+                File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
             }
             catch (FileLoadException)
             {
@@ -189,13 +180,30 @@ namespace Han_FP_Hospital_Management_System
         }
 
         //Remove Patient from the List, but data still remain for future reference
-        public void DischargePatient(int ID)
+        public void DischargePatient(int ID, int BillID)
         {
             try
             {
-                
+                Patient PatientToDischarge = AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault();
+                for(int i = 0; i < PatientToDischarge.VisitHistory.Count; i++)
+                {
+                    Bill TargetBill = PatientToDischarge.VisitHistory[i].BillInformation;
+                    if ( TargetBill.BillID == BillID)
+                    {
+                        if (TargetBill.Status == BillStatusEnum.Paid)
+                        {
+                            Console.WriteLine("Congratulations on getting discharged! You are free to leave now!\n");
+                        }
+                        else if (TargetBill.Status == BillStatusEnum.Unpaid)
+                            Console.WriteLine("Please settle the bill first before thinking about being discharged!\n");
+                        else
+                            Console.WriteLine("Bill ID does not exist! Please ask the doctor in charge for your ID again!\n");
+                            
+                    }
+                }
 
-                UpdatePatientJsonFile();
+                string UpdatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
+                File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
             }
             catch (FileLoadException)
             {
@@ -382,13 +390,29 @@ namespace Han_FP_Hospital_Management_System
             return FinalBill;
         }
 
-        public void SettleBill(int ID)
+        public void SettleBill(int ID, int BillID)
         {
             try
             {
-               
+                Patient BillSettler = AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault();
+                for(int i = 0; i < BillSettler.VisitHistory.Count; i++)
+                {
+                    Bill TargetBill = BillSettler.VisitHistory[i].BillInformation;
+                    if (TargetBill.Status == BillStatusEnum.Unpaid)
+                    {
+                        Console.WriteLine("Thank you! Your bill has now been paid!");
+                        Console.WriteLine("Please wait for the staff to discharge you!\n");
+                        TargetBill.Status = BillStatusEnum.Paid;
+                    }
+                    else
+                    {
+                        Console.WriteLine("This bill has already been paid!");
+                        Console.WriteLine("Is the entered Bill ID wrong?\n");
+                    }
+                }
 
-                UpdatePatientJsonFile();
+                string UpdatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
+                File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
             }
             catch (FileLoadException)
             {

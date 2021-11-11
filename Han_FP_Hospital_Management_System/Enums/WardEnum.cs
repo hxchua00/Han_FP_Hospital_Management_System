@@ -13,6 +13,7 @@ namespace Han_FP_Hospital_Management_System
         ClassC,
         Private,
         NIL,
+        Discharged,
         Invalid
     }
 }
