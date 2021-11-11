@@ -34,8 +34,8 @@ namespace Han_FP_Hospital_Management_System
             {
                 AllPatientInfo = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
 
-                string pList = JsonConvert.SerializeObject(AllPatientInfo);
-                File.WriteAllText("Patient_Information.Json", pList);
+                //string pList = JsonConvert.SerializeObject(AllPatientInfo);
+                //File.WriteAllText("Patient_Information.Json", pList);
 
                 //Add patient info to list
                 if (patient != null)
@@ -44,14 +44,14 @@ namespace Han_FP_Hospital_Management_System
                     _config.IncreatementTotalPatientCounter();
                     _config.IncreatementTotaBillCounter();
 
+                    string UpdatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
+                    File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
+
                     Console.WriteLine($"Name: {patient.PatientName}, ID: {patient.PatientID} has been added successfully!\n");
                     Console.WriteLine("If you are a patient, please re-login using the new ID provided for you!\n");
                 }
                 else
                     Console.WriteLine("Registering of new patient failed. Please try again.\n");
-
-                string UpdatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
-                File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
             }
             catch (FileLoadException)
             {

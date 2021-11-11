@@ -8,7 +8,7 @@ namespace Han_FP_Hospital_Management_System
     public class UserManager : IUserManager
     {
         private IUtilityManager _utility;
-        private List<User> _accountLists;
+        private List<User> _accountLists = new List<User>();
         public User CurrentUser { get; private set; }
         public UserManager(IUtilityManager utility)
         {
@@ -28,7 +28,7 @@ namespace Han_FP_Hospital_Management_System
         //Login verification, checking aginst data read from the Json file
         public bool LogOn(int userId, string password)
         {
-            User userObj =  _accountLists.Where(x => x.ID == userId).FirstOrDefault();
+            User userObj = _accountLists.Where(x => x.ID == userId).FirstOrDefault();
             return string.Equals(userObj.HashedPassword, _utility.ComputeSha256Hash(password), StringComparison.Ordinal);
         }
         //Creates new User accounts 
