@@ -1,16 +1,18 @@
-﻿
-
-namespace Han_FP_Hospital_Management_System
+﻿namespace Han_FP_Hospital_Management_System
 {
-    class User
+    public class User
     {
-        public string Name { get; set; }
-        public int ID { get; set; }
-        public string HashedPassword { get; set; }
-
-        public User()
+        public string Name { get; private set; }
+        public int ID { get; private set; }
+        public string HashedPassword { get; private set; }
+        public UserType Type { get; private set; }
+        public User() { }
+        public User(string name, int id, string hasedPassword, UserType type)
         {
-            
+            Name = name;
+            ID = id;
+            HashedPassword = hasedPassword;
+            Type = type;
         }
     }
 }

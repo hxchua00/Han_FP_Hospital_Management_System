@@ -50,13 +50,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bill.cs" />
-    <Compile Include="Hospital_Admin.cs" />
-    <Compile Include="Hospital_Worker.cs" />
+    <Compile Include="BillStatusEnum.cs" />
+    <Compile Include="ConfigurationManager.cs" />
+    <Compile Include="DepartmentEnum.cs" />
+    <Compile Include="DoctorsEnum.cs" />
+    <Compile Include="EthenicityEnum.cs" />
+    <Compile Include="GenderEnum.cs" />
+    <Compile Include="HospitalManager.cs" />
+    <Compile Include="IConfigurationManager.cs" />
+    <Compile Include="IHospitalManager.cs" />
+    <Compile Include="IUserManager.cs" />
+    <Compile Include="IUtilityManager.cs" />
     <Compile Include="Patient.cs" />
+    <Compile Include="PatientVisitRecord.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserManager.cs" />
     <Compile Include="User.cs" />
+    <Compile Include="UserType.cs" />
+    <Compile Include="UtilityManager.cs" />
+    <Compile Include="WardEnum.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
