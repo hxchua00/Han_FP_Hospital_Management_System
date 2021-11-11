@@ -482,14 +482,27 @@ namespace Han_FP_Hospital_Management_System
                                     break;
                             }
 
+                            //Generating Bill
+                            Console.WriteLine("Generating bill for patient...\n");
+
+                            int BillID = _config.TotalBillCounter;
+                            double totalAmt = hospitalManager.CalculateTotalBill(ID);
+                            double gst = _config.Gst;
+                            Console.WriteLine("How much subsidies does the patient have? (%)");
+                            double subsidy = Convert.ToDouble(Console.ReadLine());
+                            BillStatusEnum status = BillStatusEnum.Unpaid;
+
+                            Bill newBill = new Bill(BillID, gst, subsidy, totalAmt, status);
+
+
                             //Calls AdmitPatient
-                            if(department == DepartmentEnum.Invalid || ward == WardEnum.Invalid || DocInCharge == DoctorsEnum.Invalid)
+                            if (department == DepartmentEnum.Invalid || ward == WardEnum.Invalid || DocInCharge == DoctorsEnum.Invalid)
                             {
                                 Console.WriteLine("Invalid information detected. Unable to proceed with data recording.\n");
                             }
                             else
                             {
-                                PatientVisitRecord newRecord = new PatientVisitRecord(DocInCharge, department, ward, duration, Symptoms, Medicines, null);
+                                PatientVisitRecord newRecord = new PatientVisitRecord(DocInCharge, department, ward, duration, Symptoms, Medicines, newBill);
                                 hospitalManager.AdmitPatient(ID, newRecord);
                             }
 
@@ -590,13 +603,7 @@ namespace Han_FP_Hospital_Management_System
                             Console.Write("Enter patient ID: ");
                             patientID = Convert.ToInt32(Console.ReadLine());
                             Console.WriteLine();
-                            Console.WriteLine("Generating bill for patient...\n");
-
-                            int BillID = _config.TotalBillCounter;
-                            double gst = _config.Gst;
-                            Console.WriteLine("How much subsidies does the patient have? (%)");
-                            double subsidy = Convert.ToDouble(Console.ReadLine());
-                            double totalAmt = hospitalManager.CalculateTotalBill(patientID);
+                           
                             break;
                         case 4:
                             Console.WriteLine("Enter patient's ID here: ");

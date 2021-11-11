@@ -12,8 +12,6 @@ namespace Han_FP_Hospital_Management_System
         void ViewPatientInfo(int ID);
         double CalculateTotalBill(int ID);
         void SettleBill(int ID);
-        Bill GenerateBill(int ID);
-        void ShowTheBill(int ID);
         string GetPatientName(int ID);
         DepartmentEnum GetPatientDept(int ID);
         WardEnum GetPatientWard(int ID);

@@ -50,26 +50,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bill.cs" />
-    <Compile Include="BillStatusEnum.cs" />
-    <Compile Include="ConfigurationManager.cs" />
-    <Compile Include="DepartmentEnum.cs" />
-    <Compile Include="DoctorsEnum.cs" />
-    <Compile Include="EthenicityEnum.cs" />
-    <Compile Include="GenderEnum.cs" />
-    <Compile Include="HospitalManager.cs" />
-    <Compile Include="IConfigurationManager.cs" />
-    <Compile Include="IHospitalManager.cs" />
-    <Compile Include="IUserManager.cs" />
-    <Compile Include="IUtilityManager.cs" />
+    <Compile Include="Enums\BillStatusEnum.cs" />
+    <Compile Include="Managers\ConfigurationManager.cs" />
+    <Compile Include="Enums\DepartmentEnum.cs" />
+    <Compile Include="Enums\DoctorsEnum.cs" />
+    <Compile Include="Enums\EthenicityEnum.cs" />
+    <Compile Include="Enums\GenderEnum.cs" />
+    <Compile Include="Managers\HospitalManager.cs" />
+    <Compile Include="Interfaces\IConfigurationManager.cs" />
+    <Compile Include="Interfaces\IHospitalManager.cs" />
+    <Compile Include="Interfaces\IUserManager.cs" />
+    <Compile Include="Interfaces\IUtilityManager.cs" />
     <Compile Include="Patient.cs" />
     <Compile Include="PatientVisitRecord.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserManager.cs" />
+    <Compile Include="Managers\UserManager.cs" />
     <Compile Include="User.cs" />
     <Compile Include="UserType.cs" />
-    <Compile Include="UtilityManager.cs" />
-    <Compile Include="WardEnum.cs" />
+    <Compile Include="Managers\UtilityManager.cs" />
+    <Compile Include="Enums\WardEnum.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
