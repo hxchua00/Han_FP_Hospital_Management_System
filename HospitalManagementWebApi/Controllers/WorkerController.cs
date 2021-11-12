@@ -10,12 +10,15 @@ using Han_FP_Hospital_Management_System;
 
 namespace HospitalManagementWebApi.Controllers
 {
-    [RoutePrefix("")]
+    [RoutePrefix("api/Worker")]
     public class WorkerController : ApiController
     {
-        private List<Patient> AllPatientInfo = new List<Patient>();            //Stores all pateint information
-        private IConfigurationManager _config;
-
+        List<Patient> AllPatientInfo = new List<Patient>();            //Stores all pateint information
+        IConfigurationManager _config;
+        public WorkerController(IConfigurationManager configuration)
+        {
+            _config = configuration;
+        }
         public void Initialize()
         {
             if (!File.Exists("Patient_Information.Json"))
@@ -30,7 +33,7 @@ namespace HospitalManagementWebApi.Controllers
         [HttpGet]
         [Route("AddPatient")]
         //Add new patient to database
-        public IEnumerable<Patient> AddPatient(Patient patient)
+        public IHttpActionResult AddPatient(Patient patient)
         {
             AllPatientInfo = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
 
@@ -43,15 +46,15 @@ namespace HospitalManagementWebApi.Controllers
 
                 string UpdatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
                 File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
+                return Ok("New Patient added succcesfully.");
             }
-            IList<Patient> UpdatedPatientList = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
-            return UpdatedPatientList;
+            return BadRequest("Patient cannot be added now.");
         }
         [HttpPatch]
         [Route("AdmitPatient")]
         //Admit the patient to the respective department
         //Inclusive of consultation of doctors.
-        public IEnumerable<Patient> AdmitPatient(int ID, PatientVisitRecord visitRecord)
+        public Patient AdmitPatient(int ID, PatientVisitRecord visitRecord)
         {
             Patient patientToAdmit = AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault();
             patientToAdmit.VisitHistory.Add(visitRecord);
@@ -60,13 +63,14 @@ namespace HospitalManagementWebApi.Controllers
             File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
 
             IList<Patient> UpdatedPatientList = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
-            return UpdatedPatientList;
+            Patient UpdatedPatient = UpdatedPatientList.Where(x => x.PatientID == ID).FirstOrDefault();
+            return UpdatedPatient;
         }
 
         [HttpPut]
         [Route("DischargePatient")]
         //Remove Patient from the List, but data still remain for future reference
-        public List<Patient> DischargePatient(int ID, int BillID)
+        public IHttpActionResult DischargePatient(int ID, int BillID)
         {
             Patient PatientToDischarge = AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault();
             List<Patient> DischargedPatients = new List<Patient>();
@@ -86,12 +90,14 @@ namespace HospitalManagementWebApi.Controllers
                         AllPatientInfo.Remove(PatientToDischarge);
                         string UpdatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
                         File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
+
+                        return Ok("Patient successfully discharged.");
                     }
                 }
             }
             var UpdatedDischargedList = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("DischargedPatient.Json"));
             DischargedPatients.AddRange(UpdatedDischargedList);
-            return DischargedPatients;
+            return BadRequest("Patient cannot be discharged now.");
         }
 
         [HttpGet]

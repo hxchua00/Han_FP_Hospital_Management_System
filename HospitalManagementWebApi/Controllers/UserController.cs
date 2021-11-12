@@ -16,6 +16,11 @@ namespace HospitalManagementWebApi.Controllers
         private List<User> _accountLists = new List<User>();
         public User CurrentUser { get; private set; }
 
+        public UserController(IUtilityManager utility)
+        {
+            _utility = utility;
+        }
+
         [HttpGet]
         [Route("")]
         //Runs at start of program
