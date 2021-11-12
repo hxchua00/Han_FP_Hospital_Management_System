@@ -105,7 +105,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Data\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Han_FP_Hospital_Management_System\Han_FP_Hospital_Management_System.csproj">

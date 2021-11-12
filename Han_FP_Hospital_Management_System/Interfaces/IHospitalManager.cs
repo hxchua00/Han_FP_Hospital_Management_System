@@ -2,7 +2,7 @@
 
 namespace Han_FP_Hospital_Management_System
 {
-    interface IHospitalManager
+    public interface IHospitalManager
     {
         void Initialize();
         void AddPatient(Patient p);
