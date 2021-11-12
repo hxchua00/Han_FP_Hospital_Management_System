@@ -1,7 +1,7 @@
 ﻿namespace Han_FP_Hospital_Management_System
 {
     //Interface for UserManager Class
-    interface IUserManager
+    public interface IUserManager
     {
         User CurrentUser { get; }
         void Initialize();

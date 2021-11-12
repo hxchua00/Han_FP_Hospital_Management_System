@@ -1,21 +1,23 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Web;
+using System.Web.Http;
+using Han_FP_Hospital_Management_System;
+using Newtonsoft.Json;
 
-namespace Han_FP_Hospital_Management_System
+namespace HospitalManagementWebApi.Controllers
 {
-    public class UserManager : IUserManager
+    [RoutePrefix("api/UserManager")]
+    public class UserController : ApiController, IUserManager
     {
         private IUtilityManager _utility;
         private List<User> _accountLists = new List<User>();
         public User CurrentUser { get; private set; }
-        public UserManager(IUtilityManager utility)
-        {
-            //Creating an interface object
-            _utility = utility;
-        }
+
+        [HttpGet]
+        [Route("")]
         //Runs at start of program
         public void Initialize()
         {
@@ -26,12 +28,18 @@ namespace Han_FP_Hospital_Management_System
             _accountLists = JsonConvert.DeserializeObject<List<User>>(File.ReadAllText("Staff_Accounts.Json"));
             CurrentUser = null;
         }
+
+        [HttpGet]
+        [Route("VerifyLogin")]
         //Login verification, checking aginst data read from the Json file
         public bool LogOn(int userId, string password)
         {
             User userObj = _accountLists.Where(x => x.ID == userId).FirstOrDefault();
             return string.Equals(userObj.HashedPassword, _utility.ComputeSha256Hash(password), StringComparison.Ordinal);
         }
+
+        [HttpPut]
+        [Route("CreateUser")]
         //Creates new User accounts 
         private void AddUser()
         {
@@ -52,6 +60,8 @@ namespace Han_FP_Hospital_Management_System
             File.WriteAllText("Staff_Accounts.Json", AddAccountToList);
         }
 
+        [HttpGet]
+        [Route("GetUser")]
         //Returns user Information whose userID is defined
         public User GetUser(int userID)
         {

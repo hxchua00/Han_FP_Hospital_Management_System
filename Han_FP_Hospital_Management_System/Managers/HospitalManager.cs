@@ -7,11 +7,12 @@ using System.Linq;
 
 namespace Han_FP_Hospital_Management_System
 {
-    class HospitalManager : IHospitalManager
+    public class HospitalManager : IHospitalManager
     {
         private List<Patient> AllPatientInfo = new List<Patient>();                                 //Stores all pateint information
         private IConfigurationManager _config;
 
+        public HospitalManager() { }
         public HospitalManager(IConfigurationManager configuration)
         {
             _config = configuration;

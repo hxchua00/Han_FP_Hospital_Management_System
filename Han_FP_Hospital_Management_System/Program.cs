@@ -482,37 +482,22 @@ namespace Han_FP_Hospital_Management_System
                                     break;
                             }
 
-                            //Generating Bill
-                            Console.WriteLine("Generating bill for patient...\n");
-
-                            int BillID = _config.TotalBillCounter;
-                            double totalAmt = hospitalManager.CalculateTotalBill(ID);
-                            double gst = _config.Gst;
-                            Console.WriteLine("How much subsidies does the patient have? (%)");
-                            double subsidy = Convert.ToDouble(Console.ReadLine());
-                            BillStatusEnum status = BillStatusEnum.Unpaid;
-
-                            Bill newBill = new Bill(BillID, gst, subsidy, totalAmt, status);
-
-
                             //Calls AdmitPatient
-                            if (department == DepartmentEnum.Invalid || ward == WardEnum.Invalid || DocInCharge == DoctorsEnum.Invalid)
+                            if(department == DepartmentEnum.Invalid || ward == WardEnum.Invalid || DocInCharge == DoctorsEnum.Invalid)
                             {
                                 Console.WriteLine("Invalid information detected. Unable to proceed with data recording.\n");
                             }
                             else
                             {
-                                Console.WriteLine($"Patient's Bill ID for this visit is, {BillID}.");
-                                Console.WriteLine($"Use this ID to pay your bills, or else you won't be discharged.\n");
-
-                                PatientVisitRecord newRecord = new PatientVisitRecord(DocInCharge, department, ward, duration, Symptoms, Medicines, newBill);
+                                PatientVisitRecord newRecord = new PatientVisitRecord(DocInCharge, department, ward, duration, Symptoms, Medicines, null);
                                 hospitalManager.AdmitPatient(ID, newRecord);
                             }
+
                             break;
                         case 2:
-                            Console.WriteLine("Enter bill ID to settle bill: ");
+                            Console.WriteLine("Enter bill ID for settlement: ");
                             int billID = Convert.ToInt32(Console.ReadLine());
-                            hospitalManager.SettleBill(ID, billID);
+                            hospitalManager.SettleBill(ID,billID);
                             break;
                         case 3:
                             Console.WriteLine("Thank you for coming! Stay safe and healthy!\n");
@@ -607,14 +592,20 @@ namespace Han_FP_Hospital_Management_System
                             Console.Write("Enter patient ID: ");
                             patientID = Convert.ToInt32(Console.ReadLine());
                             Console.WriteLine();
-                           
+                            Console.WriteLine("Generating bill for patient...\n");
+
+                            int BillID = _config.TotalBillCounter;
+                            double gst = _config.Gst;
+                            Console.WriteLine("How much subsidies does the patient have? (%)");
+                            double subsidy = Convert.ToDouble(Console.ReadLine());
+                            double totalAmt = hospitalManager.CalculateTotalBill(patientID);
                             break;
                         case 4:
                             Console.WriteLine("Enter patient's ID here: ");
                             patientID = Convert.ToInt32(Console.ReadLine());
-                            Console.WriteLine("Enter Bill ID for this visit: ");
-                            int billID = Convert.ToInt32(Console.ReadLine());
-                            hospitalManager.DischargePatient(patientID,billID);
+                            Console.WriteLine("Enter bill ID for confirmation: ");
+                            BillID = Convert.ToInt32(Console.ReadLine());
+                            hospitalManager.DischargePatient(patientID, BillID);
                             break;
                         case 5:
                             Console.WriteLine("Taking a break so soon? There's still many things to do.\n");
