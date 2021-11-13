@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Web;
 using System.Web.Http;
-using Han_FP_Hospital_Management_System;
+using HospitalManagement.Common;
+using HospitalManagementWebApi.Models;
 using Newtonsoft.Json;
 
 namespace HospitalManagementWebApi.Controllers

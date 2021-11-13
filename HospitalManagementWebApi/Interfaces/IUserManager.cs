@@ -1,4 +1,6 @@
-﻿namespace Han_FP_Hospital_Management_System
+﻿using HospitalManagementWebApi.Models;
+
+namespace HospitalManagementWebApi.Interfaces
 {
     //Interface for UserManager Class
     public interface IUserManager

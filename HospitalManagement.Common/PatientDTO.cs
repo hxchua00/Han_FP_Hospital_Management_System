@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using HospitalManagement.Common;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace HospitalManagementWebApi.Models
 
+namespace HospitalManagement.Common
 {
-    public class Patient
+    public class PatientDTO
     {
         public int PatientID { get; private set; }                  //Unique ID for patients
         public string PatientName { get; private set; }             //Name of Patient
@@ -16,11 +18,11 @@ namespace HospitalManagementWebApi.Models
         public EthenicityEnum Ethnicity { get; private set; }               //Race of the Patient
         public string Address { get; private set; }                 //Patient's Current Staying Address 
         public int ContactNum { get; private set; }                 //Patient's contact number
-        public List<PatientVisitRecord> VisitHistory { get; private set; }
+        public List<PatientVisitRecordDTO> VisitHistory { get; private set; }
 
-        public Patient() { }
+        public PatientDTO() { }
 
-        public Patient(int totalRegistration, string pName, EthenicityEnum pEthnicity, double pHeight,
+        public PatientDTO(int totalRegistration, string pName, EthenicityEnum pEthnicity, double pHeight,
             double pWeight, GenderEnum pGender, string pAddress, int pContactNum, int pAge)
         {
             PatientID = 1000 + totalRegistration;
@@ -32,13 +34,7 @@ namespace HospitalManagementWebApi.Models
             Address = pAddress;
             ContactNum = pContactNum;
             PatientAge = pAge;
-            VisitHistory = new List<PatientVisitRecord>();   
-        }
-
-        public void AddPatientVisitInformation(PatientVisitRecord record)
-        {
-            VisitHistory.Add(record);
+            VisitHistory = new List<PatientVisitRecordDTO>();
         }
     }
-       
 }

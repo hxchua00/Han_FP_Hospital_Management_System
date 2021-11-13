@@ -1,11 +1,11 @@
-﻿using System;
+﻿using HospitalManagementWebApi.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using System.Web.Http;
-using Han_FP_Hospital_Management_System;
 
 namespace HospitalManagementWebApi.Controllers
 {

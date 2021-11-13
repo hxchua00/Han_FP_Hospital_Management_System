@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Http;
-using Han_FP_Hospital_Management_System;
+using HospitalManagement.Common;
+using HospitalManagementWebApi.Interfaces;
+using HospitalManagementWebApi.Models;
 using Newtonsoft.Json;
 
 namespace HospitalManagementWebApi.Controllers
@@ -21,8 +22,6 @@ namespace HospitalManagementWebApi.Controllers
             _utility = utility;
         }
 
-        [HttpGet]
-        [Route("")]
         //Runs at start of program
         public void Initialize()
         {
@@ -73,5 +72,9 @@ namespace HospitalManagementWebApi.Controllers
             return _accountLists.Where(x => x.ID == userID).FirstOrDefault();
         }
 
+        User IUserManager.GetUser(int userID)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

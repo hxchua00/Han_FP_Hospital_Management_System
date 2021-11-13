@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Han_FP_Hospital_Management_System
+namespace HospitalManagement.Common
 {
     public enum WardEnum
     {

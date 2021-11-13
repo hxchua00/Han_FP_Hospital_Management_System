@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Http;
 using System.IO;
-using System.Security;
 using Newtonsoft.Json;
-using Han_FP_Hospital_Management_System;
+using HospitalManagement.Common;
+using HospitalManagementWebApi.Models;
+using HospitalManagementWebApi.Interfaces;
 
 namespace HospitalManagementWebApi.Controllers
 {
@@ -19,6 +19,8 @@ namespace HospitalManagementWebApi.Controllers
         {
             _config = configuration;
         }
+
+        [Route("")]
         public void Initialize()
         {
             if (!File.Exists("Patient_Information.Json"))

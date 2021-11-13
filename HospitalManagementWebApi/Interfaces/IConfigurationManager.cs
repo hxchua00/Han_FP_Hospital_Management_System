@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Han_FP_Hospital_Management_System
+namespace HospitalManagementWebApi.Interfaces
 {
     public interface IConfigurationManager
     {

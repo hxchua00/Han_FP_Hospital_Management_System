@@ -1,4 +1,4 @@
-﻿namespace Han_FP_Hospital_Management_System
+﻿namespace HospitalManagement.Common
 {
     public enum UserType
     {

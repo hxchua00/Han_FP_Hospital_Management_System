@@ -6,6 +6,7 @@ using System.Web.Http;
 
 namespace HospitalManagementWebApi.Controllers
 {
+    [RoutePrefix("api/Config")]
     public class ConfigurationController : ApiController
     {
         public int TotalPatientRegistration { get; private set; }
@@ -13,19 +14,24 @@ namespace HospitalManagementWebApi.Controllers
         public double Gst { get; private set; }
         public ConfigurationController() { }
 
-        public void IncreatementTotalPatientCounter()
-        {
-            TotalPatientRegistration++;
-        }
-        public void IncreatementTotaBillCounter()
-        {
-            TotalBillCounter++;
-        }
         public ConfigurationController(int patientCounter, int billCounter, double gst)
         {
             TotalPatientRegistration = patientCounter;
             TotalBillCounter = billCounter;
             Gst = gst;
+        }
+
+        [HttpPatch]
+        [Route("IncreasePatientCount")]
+        public void IncreatementTotalPatientCounter()
+        {
+            TotalPatientRegistration++;
+        }
+        [HttpPatch]
+        [Route("IncreaseBillCount")]
+        public void IncreatementTotaBillCounter()
+        {
+            TotalBillCounter++;
         }
     }
 }

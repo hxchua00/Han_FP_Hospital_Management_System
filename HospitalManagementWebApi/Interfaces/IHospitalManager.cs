@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using HospitalManagement.Common;
+using HospitalManagementWebApi.Models;
 
-namespace Han_FP_Hospital_Management_System
+namespace HospitalManagementWebApi.Interfaces
 {
     public interface IHospitalManager
     {
