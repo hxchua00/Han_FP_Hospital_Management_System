@@ -12,8 +12,6 @@ namespace HospitalManagement.Common.DTO
         public List<string> ListOfSymptoms { get; private set; }    //Reason the Patient is visiting the hospital for
         public List<string> ListOfMedicines { get; private set; }   //Prescribed medicines
         public BillDTO BillInformation { get; private set; }
-
-        public PatientVisitRecordDTO() { }
         public PatientVisitRecordDTO(DoctorsEnum DoctorInCharge, DepartmentEnum Department, WardEnum Ward, int StayDuration,
                                     List<string> ListOfSymptoms, List<string> ListOfMedicines, BillDTO BillInformation)
         {

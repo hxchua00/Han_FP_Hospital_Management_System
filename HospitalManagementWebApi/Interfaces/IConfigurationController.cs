@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace HospitalManagementWebApi.Interfaces
+﻿namespace HospitalManagementWebApi.Interfaces
 {
-    public interface IConfigurationManager
+    public interface IConfigurationController
     {
         int TotalPatientRegistration { get; }
 

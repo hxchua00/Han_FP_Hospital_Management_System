@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using HospitalManagementWebApi.Interfaces;
 using System.Web.Http;
 
 namespace HospitalManagementWebApi.Controllers
 {
     [RoutePrefix("api/Config")]
-    public class ConfigurationController : ApiController
+    public class ConfigurationController : ApiController, IConfigurationController
     {
         public int TotalPatientRegistration { get; private set; }
         public int TotalBillCounter { get; private set; }
         public double Gst { get; private set; }
-        public ConfigurationController() { }
+        public ConfigurationController() : this(0,0,0.07) { }
 
         public ConfigurationController(int patientCounter, int billCounter, double gst)
         {

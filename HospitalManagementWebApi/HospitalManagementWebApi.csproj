@@ -84,14 +84,15 @@
     <Compile Include="Controllers\ConfigurationController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\UtilityController.cs" />
+    <Compile Include="Utility\UtilityManager.cs" />
     <Compile Include="Controllers\WorkerController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Interfaces\IConfigurationManager.cs" />
-    <Compile Include="Interfaces\IHospitalManager.cs" />
-    <Compile Include="Interfaces\IUserManager.cs" />
+    <Compile Include="Interfaces\IAdminController.cs" />
+    <Compile Include="Interfaces\IConfigurationController.cs" />
+    <Compile Include="Interfaces\IHospitalController.cs" />
+    <Compile Include="Interfaces\IUserController.cs" />
     <Compile Include="Interfaces\IUtilityManager.cs" />
     <Compile Include="Models\Bill.cs" />
     <Compile Include="Models\Patient.cs" />

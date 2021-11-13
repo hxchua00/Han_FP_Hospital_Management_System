@@ -7,20 +7,21 @@ using Newtonsoft.Json;
 using HospitalManagementWebApi.Models;
 using HospitalManagementWebApi.Interfaces;
 using HospitalManagement.Common.Common;
+using HospitalManagement.Common.DTO;
 
 namespace HospitalManagementWebApi.Controllers
 {
     [RoutePrefix("api/Worker")]
-    public class WorkerController : ApiController
+    public class WorkerController : ApiController, IHospitalController
     {
         List<Patient> AllPatientInfo = new List<Patient>();            //Stores all pateint information
-        IConfigurationManager _config;
-        public WorkerController(IConfigurationManager configuration)
+        IConfigurationController _config;
+        public WorkerController()
         {
-            _config = configuration;
+            _config = new ConfigurationController(); ;
+            Initialize();
         }
-
-        [Route("")]
+        
         public void Initialize()
         {
             if (!File.Exists("Patient_Information.Json"))
@@ -35,14 +36,14 @@ namespace HospitalManagementWebApi.Controllers
         [HttpGet]
         [Route("AddPatient")]
         //Add new patient to database
-        public IHttpActionResult AddPatient(Patient patient)
+        public IHttpActionResult AddPatient(PatientDTO patient)
         {
             AllPatientInfo = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
 
             //Add patient info to list
             if (patient != null)
             {
-                AllPatientInfo.Add(patient);
+                AllPatientInfo.Add(MapToModel(patient));
                 _config.IncreatementTotalPatientCounter();
                 _config.IncreatementTotaBillCounter();
 
@@ -56,17 +57,17 @@ namespace HospitalManagementWebApi.Controllers
         [Route("AdmitPatient")]
         //Admit the patient to the respective department
         //Inclusive of consultation of doctors.
-        public Patient AdmitPatient(int ID, PatientVisitRecord visitRecord)
+        public PatientDTO AdmitPatient(int ID, PatientVisitRecordDTO visitRecord)
         {
             Patient patientToAdmit = AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault();
-            patientToAdmit.VisitHistory.Add(visitRecord);
+            patientToAdmit.VisitHistory.Add(MapToModel(visitRecord));
 
             string UpdatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
             File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
 
             IList<Patient> UpdatedPatientList = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
             Patient UpdatedPatient = UpdatedPatientList.Where(x => x.PatientID == ID).FirstOrDefault();
-            return UpdatedPatient;
+            return MapToDTO(UpdatedPatient);
         }
 
         [HttpPut]
@@ -105,12 +106,12 @@ namespace HospitalManagementWebApi.Controllers
         [HttpGet]
         [Route("ViewPatientInfo")]
         //Search through database for Patient's Information via Reference ID given to them
-        public Patient ViewPatientInfo(int ID)
+        public PatientDTO ViewPatientInfo(int ID)
         {
             IList<Patient> WritePatientInfo = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
             Patient TargetPatient = WritePatientInfo.Where(x => x.PatientID == ID).FirstOrDefault();
 
-            return TargetPatient;
+            return MapToDTO(TargetPatient);
         }
 
         [HttpGet]
@@ -282,5 +283,24 @@ namespace HospitalManagementWebApi.Controllers
             else
                 return false;
         }
+
+        private PatientDTO MapToDTO(Patient patient)
+        {
+            return new PatientDTO();
+        }
+        private Patient MapToModel(PatientDTO patient)
+        {
+            return new Patient();
+        }
+
+        private PatientVisitRecordDTO MapToDTO(PatientVisitRecord patient)
+        {
+            return new PatientVisitRecordDTO();
+        }
+        private PatientVisitRecord MapToModel(PatientVisitRecordDTO patient)
+        {
+            return new PatientVisitRecord();
+        }
     }
+}
 }

@@ -1,19 +1,11 @@
 ﻿using HospitalManagementWebApi.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
-using System.Web.Http;
 
-namespace HospitalManagementWebApi.Controllers
+namespace HospitalManagementWebApi.Utility
 {
-    [RoutePrefix("api/Authentication")]
-    public class UtilityController : ApiController, IUtilityManager
+    public class UtilityManager : IUtilityManager
     {
-        [HttpGet]
-        [Route("")]
         public string ComputeSha256Hash(string rawData)
         {
             StringBuilder builder = new StringBuilder();
@@ -29,9 +21,7 @@ namespace HospitalManagementWebApi.Controllers
                 {
                     builder.Append(bytes[i].ToString("x2"));
                 }
-
             }
-           
             return builder.ToString();
         }
     }

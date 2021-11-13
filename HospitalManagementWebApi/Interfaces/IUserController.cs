@@ -1,13 +1,13 @@
-﻿using HospitalManagementWebApi.Models;
+﻿using HospitalManagement.Common.DTO;
 
 namespace HospitalManagementWebApi.Interfaces
 {
     //Interface for UserManager Class
-    public interface IUserManager
+    public interface IUserController
     {
-        User CurrentUser { get; }
+        UserDTO CurrentUser { get; }
         void Initialize();
-        User GetUser(int userID);
+        UserDTO GetUser(int userID);
         bool LogOn(int userId, string password);
     }
 }

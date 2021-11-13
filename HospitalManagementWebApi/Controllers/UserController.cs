@@ -4,22 +4,26 @@ using System.IO;
 using System.Linq;
 using System.Web.Http;
 using HospitalManagement.Common.Common;
+using HospitalManagement.Common.DTO;
 using HospitalManagementWebApi.Interfaces;
 using HospitalManagementWebApi.Models;
+using HospitalManagementWebApi.Utility;
 using Newtonsoft.Json;
 
 namespace HospitalManagementWebApi.Controllers
 {
     [RoutePrefix("api/UserManager")]
-    public class UserController : ApiController, IUserManager
+    public class UserController : ApiController, IUserController
     {
         private IUtilityManager _utility;
         private List<User> _accountLists = new List<User>();
         public User CurrentUser { get; private set; }
 
-        public UserController(IUtilityManager utility)
+        public UserController()
         {
-            _utility = utility;
+            _utility = new UtilityManager();
+            AddUser();
+            Initialize();
         }
 
         //Runs at start of program
@@ -42,8 +46,6 @@ namespace HospitalManagementWebApi.Controllers
             return string.Equals(userObj.HashedPassword, _utility.ComputeSha256Hash(password), StringComparison.Ordinal);
         }
 
-        [HttpPut]
-        [Route("CreateUser")]
         //Creates new User accounts 
         private void AddUser()
         {
@@ -67,14 +69,18 @@ namespace HospitalManagementWebApi.Controllers
         [HttpGet]
         [Route("GetUser")]
         //Returns user Information whose userID is defined
-        public User GetUser(int userID)
+        public UserDTO GetUser(int userID)
         {
-            return _accountLists.Where(x => x.ID == userID).FirstOrDefault();
+            return MapToDTO(_accountLists.Where(x => x.ID == userID).FirstOrDefault());
         }
 
-        User IUserManager.GetUser(int userID)
+        private UserDTO MapToDTO(User patient)
         {
-            throw new NotImplementedException();
+            return new UserDTO();
+        }
+        private User MapToModel(UserDTO patient)
+        {
+            return new User();
         }
     }
 }
