@@ -1,4 +1,4 @@
-﻿namespace HospitalManagement.Common
+﻿namespace HospitalManagement.Common.Common
 {
     public enum EthenicityEnum
     {

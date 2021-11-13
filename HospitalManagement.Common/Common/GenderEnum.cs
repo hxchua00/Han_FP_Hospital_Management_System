@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HospitalManagement.Common
+namespace HospitalManagement.Common.Common
 {
     public enum GenderEnum
     {

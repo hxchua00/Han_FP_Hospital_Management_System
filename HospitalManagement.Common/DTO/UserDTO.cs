@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using HospitalManagement.Common.Common;
 
-namespace HospitalManagement.Common
+namespace HospitalManagement.Common.DTO
 {
     public class UserDTO
     {

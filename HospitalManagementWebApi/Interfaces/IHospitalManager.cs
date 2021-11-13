@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using HospitalManagement.Common;
+using HospitalManagement.Common.Common;
 using HospitalManagementWebApi.Models;
 
 namespace HospitalManagementWebApi.Interfaces

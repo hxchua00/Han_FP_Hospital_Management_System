@@ -4,9 +4,9 @@ using System.Linq;
 using System.Web.Http;
 using System.IO;
 using Newtonsoft.Json;
-using HospitalManagement.Common;
 using HospitalManagementWebApi.Models;
 using HospitalManagementWebApi.Interfaces;
+using HospitalManagement.Common.Common;
 
 namespace HospitalManagementWebApi.Controllers
 {

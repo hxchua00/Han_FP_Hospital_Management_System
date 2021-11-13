@@ -1,4 +1,4 @@
-﻿using HospitalManagement.Common;
+﻿using HospitalManagement.Common.Common;
 
 namespace HospitalManagementWebApi.Models
 {

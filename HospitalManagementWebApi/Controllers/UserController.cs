@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Http;
-using HospitalManagement.Common;
+using HospitalManagement.Common.Common;
 using HospitalManagementWebApi.Interfaces;
 using HospitalManagementWebApi.Models;
 using Newtonsoft.Json;

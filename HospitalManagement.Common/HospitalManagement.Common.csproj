@@ -41,17 +41,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BillDTO.cs" />
+    <Compile Include="DTO\BillDTO.cs" />
     <Compile Include="Common\UserType.cs" />
-    <Compile Include="UserDTO.cs" />
+    <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="Common\BillStatusEnum.cs" />
     <Compile Include="Common\DepartmentEnum.cs" />
     <Compile Include="Common\DoctorsEnum.cs" />
     <Compile Include="Common\EthenicityEnum.cs" />
     <Compile Include="Common\GenderEnum.cs" />
     <Compile Include="Common\WardEnum.cs" />
-    <Compile Include="PatientDTO.cs" />
-    <Compile Include="PatientVisitRecordDTO.cs" />
+    <Compile Include="DTO\PatientDTO.cs" />
+    <Compile Include="DTO\PatientVisitRecordDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

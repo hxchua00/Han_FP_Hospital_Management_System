@@ -1,10 +1,7 @@
-﻿using System;
+﻿using HospitalManagement.Common.Common;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace HospitalManagement.Common
+namespace HospitalManagement.Common.DTO
 {
     public class PatientVisitRecordDTO
     {
