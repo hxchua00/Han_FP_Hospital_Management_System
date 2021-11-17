@@ -5,6 +5,7 @@ using HospitalManagement.Common.Common;
 using HospitalManagement.Common.DTO;
 using HospitalManagementWebApi.Interfaces;
 using HospitalManagementWebApi.Models;
+using HospitalManagementWebApi.DBContext;
 using Newtonsoft.Json;
 
 namespace HospitalManagementWebApi.Controllers
@@ -12,7 +13,14 @@ namespace HospitalManagementWebApi.Controllers
     [RoutePrefix("api/Admin")]
     public class AdminController : ApiController, IAdminController
     {
+        HospitalManagementDBContext DBContext;
+
         List<Patient> AllPatientInfo = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
+
+        public AdminController()
+        {
+            DBContext = new HospitalManagementDBContext();
+        }
 
         [HttpGet]
         [Route("PrintAllDepartments")]
@@ -58,6 +66,7 @@ namespace HospitalManagementWebApi.Controllers
                 emergencyPatientDTO.Add(MapToDTO(item));
             return (outPatientDTO, inPatientDTO, emergencyPatientDTO);
         }
+
         [HttpGet]
         [Route("PrintAllBIlls")]
         public List<BillDTO> PrintAllBills()
