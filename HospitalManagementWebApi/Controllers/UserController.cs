@@ -17,7 +17,7 @@ namespace HospitalManagementWebApi.Controllers
     {
         private IUtilityManager _utility;
         private List<User> _accountLists = new List<User>();
-        public User CurrentUser { get; private set; }
+        public UserDTO CurrentUser { get; private set; }
 
         public UserController()
         {
@@ -46,6 +46,8 @@ namespace HospitalManagementWebApi.Controllers
             return string.Equals(userObj.HashedPassword, _utility.ComputeSha256Hash(password), StringComparison.Ordinal);
         }
 
+        [HttpPost]
+        [Route("Adduser")]
         //Creates new User accounts 
         private void AddUser()
         {
@@ -74,13 +76,13 @@ namespace HospitalManagementWebApi.Controllers
             return MapToDTO(_accountLists.Where(x => x.ID == userID).FirstOrDefault());
         }
 
-        private UserDTO MapToDTO(User patient)
+        private UserDTO MapToDTO(User user)
         {
-            return new UserDTO();
+            return new UserDTO(user.Name,user.ID,user.HashedPassword,user.Type);
         }
-        private User MapToModel(UserDTO patient)
+        private User MapToModel(UserDTO user)
         {
-            return new User();
+            return new User(user.Name, user.ID, user.HashedPassword, user.Type);
         }
     }
 }

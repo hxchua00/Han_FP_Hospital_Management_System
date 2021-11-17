@@ -9,7 +9,7 @@ namespace HospitalManagementWebApi.Interfaces
     {
         void Initialize();
         IHttpActionResult AddPatient(PatientDTO p);
-        PatientDTO AdmitPatient(int ID, PatientVisitRecordDTO visitRecord);
+        IHttpActionResult AdmitPatient(int ID, PatientVisitRecordDTO visitRecord);
         IHttpActionResult DischargePatient(int ID, int BillID);
         PatientDTO ViewPatientInfo(int ID);
         double CalculateTotalBill(int ID, double subsidy);

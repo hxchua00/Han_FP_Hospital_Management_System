@@ -1,4 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Han_FP_Hospital_Management_System.Interfaces;
+using Han_FP_Hospital_Management_System.ViewModels;
+using HospitalManagement.Common.Common;
+using HospitalManagement.Common.DTO;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,26 +12,12 @@ namespace Han_FP_Hospital_Management_System
 {
     class Program
     {
-        private static IUserManager userManager;
-        private static IUtilityManager utility;
-        private static IHospitalManager hospitalManager;
-        private static IConfigurationManager _config;
+        private static IHospitalManagementViewModel vm;
         static void Main(string[] args)
         {
 
-            utility = new UtilityManager();
-            userManager = new UserManager(utility);
-            if (!File.Exists("Configuration.Json"))
-            {   
-                ConfigurationManager config = new ConfigurationManager(0, 0, 0.7);
-                string configJson = JsonConvert.SerializeObject(config);
-                File.WriteAllText("Configuration.Json", configJson);
-            }
-            _config = JsonConvert.DeserializeObject<ConfigurationManager>(File.ReadAllText("Configuration.Json"));
-
-            hospitalManager = new HospitalManager(_config);
-            userManager.Initialize();
-            hospitalManager.Initialize();
+            vm = new HospitalManagementViewModel();
+            vm.Initialize();
 
             try
             {
@@ -127,10 +117,10 @@ namespace Han_FP_Hospital_Management_System
                         Console.WriteLine("Enter Password: ");
                         string sPassword = Console.ReadLine();
 
-                        bool logonResult= userManager.LogOn(sID, sPassword);
+                        bool logonResult= vm.LogOn(sID, sPassword);
                         if(logonResult)
                         {
-                            switch(userManager.CurrentUser.Type)
+                            switch(vm.CurrentUser.Type)
                             {
                                 case UserType.Admin:
                                     AdminMenu(userManager.CurrentUser.ID);
@@ -208,8 +198,8 @@ namespace Han_FP_Hospital_Management_System
                 Console.Write($"Chosen option: {checkVisit}\n");
                 if (checkVisit == 1)
                 {
-                    Patient p = AddNewPatientDetails();
-                    hospitalManager.AddPatient(p);
+                    PatientDTO p = AddNewPatientDetails();
+                    vm.AddPatient(p);
                 }
                 else if (checkVisit == 2)
                 {
@@ -217,7 +207,7 @@ namespace Han_FP_Hospital_Management_System
                     Console.WriteLine("Please enter ID number: ");
                     int input = Convert.ToInt32(Console.ReadLine());
 
-                    if (hospitalManager.ValidatePatient(input))
+                    if (vm.ValidatePatient(input))
                     {
                         PatientMenu(input);
                     }
@@ -273,7 +263,7 @@ namespace Han_FP_Hospital_Management_System
                 while (loop)
                 {
                     Console.WriteLine();
-                    Console.WriteLine($"Welcome, {hospitalManager.GetPatientName(ID)}");
+                    Console.WriteLine($"Welcome, {vm.GetPatientName(ID)}");
                     Console.WriteLine("What is your business today?\n");
                     Console.WriteLine("1) See the doctor");
                     Console.WriteLine("2) Pay the bill");
@@ -489,15 +479,15 @@ namespace Han_FP_Hospital_Management_System
                             }
                             else
                             {
-                                PatientVisitRecord newRecord = new PatientVisitRecord(DocInCharge, department, ward, duration, Symptoms, Medicines, null);
-                                hospitalManager.AdmitPatient(ID, newRecord);
+                                PatientVisitRecordDTO newRecord = new PatientVisitRecordDTO(DocInCharge, department, ward, duration, Symptoms, Medicines, null);
+                                vm.AdmitPatient(ID, newRecord);
                             }
 
                             break;
                         case 2:
                             Console.WriteLine("Enter bill ID for settlement: ");
                             int billID = Convert.ToInt32(Console.ReadLine());
-                            hospitalManager.SettleBill(ID,billID);
+                            vm.SettleBill(ID,billID);
                             break;
                         case 3:
                             Console.WriteLine("Thank you for coming! Stay safe and healthy!\n");
@@ -575,8 +565,8 @@ namespace Han_FP_Hospital_Management_System
                     {
                         case 1:
                             Console.WriteLine("Adding new patient information...\n");
-                            Patient p = AddNewPatientDetails();
-                            hospitalManager.AddPatient(p);
+                            PatientDTO p = AddNewPatientDetails();
+                            vm.AddPatient(p);
                             break;
                         case 2:
                             Console.WriteLine("Enter Patient's ID: ");
@@ -585,7 +575,7 @@ namespace Han_FP_Hospital_Management_System
                             Console.WriteLine("Searching for patient...\n");
 
                             Console.WriteLine("==============================");
-                            hospitalManager.ViewPatientInfo(patientID);
+                            vm.ViewPatientInfo(patientID);
                             Console.WriteLine("==============================");
                             break;
                         case 3:
@@ -598,14 +588,14 @@ namespace Han_FP_Hospital_Management_System
                             double gst = _config.Gst;
                             Console.WriteLine("How much subsidies does the patient have? (%)");
                             double subsidy = Convert.ToDouble(Console.ReadLine());
-                            double totalAmt = hospitalManager.CalculateTotalBill(patientID);
+                            double totalAmt = vm.CalculateTotalBill(patientID);
                             break;
                         case 4:
                             Console.WriteLine("Enter patient's ID here: ");
                             patientID = Convert.ToInt32(Console.ReadLine());
                             Console.WriteLine("Enter bill ID for confirmation: ");
                             BillID = Convert.ToInt32(Console.ReadLine());
-                            hospitalManager.DischargePatient(patientID, BillID);
+                            vm.DischargePatient(patientID, BillID);
                             break;
                         case 5:
                             Console.WriteLine("Taking a break so soon? There's still many things to do.\n");
@@ -679,10 +669,10 @@ namespace Han_FP_Hospital_Management_System
                     switch (option)
                     {
                         case 1:
-                            hospitalManager.PrintAllDepartments();
+                            vm.PrintAllDepartments();
                             break;
                         case 2:
-                            hospitalManager.PrintAllBills();
+                            vm.PrintAllBills();
                             break;
                         case 3:
                             Console.WriteLine("Taking a break so soon? There's still many things to do.\n");
@@ -738,7 +728,7 @@ namespace Han_FP_Hospital_Management_System
 
         }
 
-        static Patient AddNewPatientDetails()
+        static PatientDTO AddNewPatientDetails()
         {
             Console.WriteLine("Please enter the details of the patients.\n");
             Console.WriteLine("Enter patient's name: ");
@@ -826,7 +816,7 @@ namespace Han_FP_Hospital_Management_System
 
             int totalRegistration = _config.TotalPatientRegistration;
 
-            Patient newPatient;
+            PatientDTO newPatient;
 
             if (pName == "" || pHeight == 0 || pWeight == 0 || pContactNum == 0 || pAddress == "" ||
                 pEthnicity == EthenicityEnum.Invalid || pGender == GenderEnum.Invalid)
@@ -836,7 +826,7 @@ namespace Han_FP_Hospital_Management_System
             }
             else
             {
-                newPatient = new Patient(totalRegistration, pName, pEthnicity, pHeight,
+                newPatient = new PatientDTO(totalRegistration, pName, pEthnicity, pHeight,
                                             pWeight, pGender, pAddress, pContactNum, pAge);
                 
             }

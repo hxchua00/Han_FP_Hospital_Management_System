@@ -99,7 +99,6 @@
     <Compile Include="Models\PatientVisitRecord.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebApiMessageHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

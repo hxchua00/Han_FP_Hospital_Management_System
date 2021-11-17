@@ -33,7 +33,7 @@ namespace HospitalManagementWebApi.Controllers
             AllPatientInfo.AddRange(patientList);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("AddPatient")]
         //Add new patient to database
         public IHttpActionResult AddPatient(PatientDTO patient)
@@ -57,17 +57,20 @@ namespace HospitalManagementWebApi.Controllers
         [Route("AdmitPatient")]
         //Admit the patient to the respective department
         //Inclusive of consultation of doctors.
-        public PatientDTO AdmitPatient(int ID, PatientVisitRecordDTO visitRecord)
+        public IHttpActionResult AdmitPatient(int ID, PatientVisitRecordDTO visitRecord)
         {
             Patient patientToAdmit = AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault();
-            patientToAdmit.VisitHistory.Add(MapToModel(visitRecord));
 
-            string UpdatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
-            File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
+            if(visitRecord != null)
+            {
+                patientToAdmit.VisitHistory.Add(MapToModel(visitRecord));
 
-            IList<Patient> UpdatedPatientList = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
-            Patient UpdatedPatient = UpdatedPatientList.Where(x => x.PatientID == ID).FirstOrDefault();
-            return MapToDTO(UpdatedPatient);
+                string UpdatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
+                File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
+
+                return Ok("Patient admitted successfully");
+            }
+            return BadRequest("Error admitting the patient");
         }
 
         [HttpPut]
@@ -100,6 +103,7 @@ namespace HospitalManagementWebApi.Controllers
             }
             var UpdatedDischargedList = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("DischargedPatient.Json"));
             DischargedPatients.AddRange(UpdatedDischargedList);
+
             return BadRequest("Patient cannot be discharged now.");
         }
 
@@ -185,7 +189,7 @@ namespace HospitalManagementWebApi.Controllers
             return AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault().VisitHistory.FirstOrDefault().Ward;
         }
         [HttpGet]
-        [Route("GetPatientVisitHistory")]
+        [Route("GetPatientMeds")]
         //Returns list of medicines from VisitHistory
         public List<string> GetPatientMedicineList(int ID)
         {
@@ -286,21 +290,43 @@ namespace HospitalManagementWebApi.Controllers
 
         private PatientDTO MapToDTO(Patient patient)
         {
-            return new PatientDTO();
+            List<PatientVisitRecordDTO> recorddtoList = new List<PatientVisitRecordDTO>();
+            foreach (PatientVisitRecord item in patient.VisitHistory)
+                recorddtoList.Add(MapToDTO(item));
+            PatientDTO dtoObj = new PatientDTO(patient.PatientID, patient.PatientName, patient.Ethnicity, patient.PatientHeight, patient.PatientWeight, patient.PatientGender, patient
+                .Address, patient.ContactNum, patient.PatientAge);
+            dtoObj.AddPatientVisitInformation(recorddtoList);
+            return dtoObj;
         }
         private Patient MapToModel(PatientDTO patient)
         {
-            return new Patient();
+            List<PatientVisitRecord> recorddtoList = new List<PatientVisitRecord>();
+            foreach (PatientVisitRecordDTO item in patient.VisitHistory)
+                recorddtoList.Add(MapToModel(item));
+            Patient modelObj = new Patient(patient.PatientID, patient.PatientName, patient.Ethnicity, patient.PatientHeight, patient.PatientWeight, patient.PatientGender, patient
+                .Address, patient.ContactNum, patient.PatientAge);
+            modelObj.AddPatientVisitInformation(recorddtoList);
+            return modelObj;
         }
 
-        private PatientVisitRecordDTO MapToDTO(PatientVisitRecord patient)
+        private PatientVisitRecordDTO MapToDTO(PatientVisitRecord record)
         {
-            return new PatientVisitRecordDTO();
+            BillDTO bidto = MapToDTO(record.BillInformation);          
+            return new PatientVisitRecordDTO(record.DoctorInCharge,record.Department,record.Ward,record.StayDuration,record.ListOfSymptoms,record.ListOfMedicines, bidto);
         }
-        private PatientVisitRecord MapToModel(PatientVisitRecordDTO patient)
+        private PatientVisitRecord MapToModel(PatientVisitRecordDTO record)
         {
-            return new PatientVisitRecord();
+            Bill bidto = MapToModel(record.BillInformation);
+            return new PatientVisitRecord(record.DoctorInCharge, record.Department, record.Ward, record.StayDuration, record.ListOfSymptoms, record.ListOfMedicines, bidto);
+        }
+
+        private BillDTO MapToDTO(Bill bill)
+        {
+            return new BillDTO(bill.BillID, bill.GST, bill.Subsidy, bill.TotalAmount, bill.Status);
+        }
+        private Bill MapToModel(BillDTO bill)
+        {
+            return new Bill(bill.BillID, bill.GST, bill.Subsidy, bill.TotalAmount, bill.Status);
         }
     }
-}
 }

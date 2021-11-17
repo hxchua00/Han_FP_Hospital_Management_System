@@ -75,19 +75,41 @@ namespace HospitalManagementWebApi.Controllers
 
         private PatientDTO MapToDTO(Patient patient)
         {
-            return new PatientDTO();
+            List<PatientVisitRecordDTO> recorddtoList = new List<PatientVisitRecordDTO>();
+            foreach (PatientVisitRecord item in patient.VisitHistory)
+                recorddtoList.Add(MapToDTO(item));
+            PatientDTO dtoObj = new PatientDTO(patient.PatientID, patient.PatientName, patient.Ethnicity, patient.PatientHeight, patient.PatientWeight, patient.PatientGender, patient
+                .Address, patient.ContactNum, patient.PatientAge);
+            dtoObj.AddPatientVisitInformation(recorddtoList);
+            return dtoObj;
         }
         private Patient MapToModel(PatientDTO patient)
         {
-            return new Patient();
+            List<PatientVisitRecord> recorddtoList = new List<PatientVisitRecord>();
+            foreach (PatientVisitRecordDTO item in patient.VisitHistory)
+                recorddtoList.Add(MapToModel(item));
+            Patient modelObj = new Patient(patient.PatientID, patient.PatientName, patient.Ethnicity, patient.PatientHeight, patient.PatientWeight, patient.PatientGender, patient
+                .Address, patient.ContactNum, patient.PatientAge);
+            modelObj.AddPatientVisitInformation(recorddtoList);
+            return modelObj;
+        }
+        private PatientVisitRecordDTO MapToDTO(PatientVisitRecord record)
+        {
+            BillDTO bidto = MapToDTO(record.BillInformation);
+            return new PatientVisitRecordDTO(record.DoctorInCharge, record.Department, record.Ward, record.StayDuration, record.ListOfSymptoms, record.ListOfMedicines, bidto);
+        }
+        private PatientVisitRecord MapToModel(PatientVisitRecordDTO record)
+        {
+            Bill bidto = MapToModel(record.BillInformation);
+            return new PatientVisitRecord(record.DoctorInCharge, record.Department, record.Ward, record.StayDuration, record.ListOfSymptoms, record.ListOfMedicines, bidto);
         }
         private BillDTO MapToDTO(Bill bill)
         {
-            return new BillDTO();
+            return new BillDTO(bill.BillID, bill.GST, bill.Subsidy, bill.TotalAmount, bill.Status);
         }
         private Bill MapToModel(BillDTO bill)
         {
-            return new Bill();
+            return new Bill(bill.BillID, bill.GST, bill.Subsidy, bill.TotalAmount, bill.Status);
         }
     }
 }

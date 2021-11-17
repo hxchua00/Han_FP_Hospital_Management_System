@@ -7,16 +7,16 @@ namespace HospitalManagementWebApi.Models
 {
     public class Patient
     {   
-        public int PatientID { get; private set; }                  //Unique ID for patients
-        public string PatientName { get; private set; }             //Name of Patient
-        public double PatientWeight { get; private set; }           //Weight of Patient
-        public double PatientHeight { get; private set; }           //Height of Patient
-        public GenderEnum PatientGender { get; private set; }           //Patient's gender
-        public int PatientAge { get; private set; }                 //Age of Patient
-        public EthenicityEnum Ethnicity { get; private set; }               //Race of the Patient
-        public string Address { get; private set; }                 //Patient's Current Staying Address 
-        public int ContactNum { get; private set; }                 //Patient's contact number
-        public List<PatientVisitRecord> VisitHistory { get; private set; }
+        public int PatientID { get; set; }                  //Unique ID for patients
+        public string PatientName { get; set; }             //Name of Patient
+        public double PatientWeight { get; set; }           //Weight of Patient
+        public double PatientHeight { get; set; }           //Height of Patient
+        public GenderEnum PatientGender { get; set; }           //Patient's gender
+        public int PatientAge { get; set; }                 //Age of Patient
+        public EthenicityEnum Ethnicity { get; set; }               //Race of the Patient
+        public string Address { get; set; }                 //Patient's Current Staying Address 
+        public int ContactNum { get; set; }                 //Patient's contact number
+        public List<PatientVisitRecord> VisitHistory { get; set; }
 
         public Patient() { }
 
@@ -38,6 +38,10 @@ namespace HospitalManagementWebApi.Models
         public void AddPatientVisitInformation(PatientVisitRecord record)
         {
             VisitHistory.Add(record);
+        }
+        public void AddPatientVisitInformation(List<PatientVisitRecord> record)
+        {
+            VisitHistory = record;
         }
     }
        
