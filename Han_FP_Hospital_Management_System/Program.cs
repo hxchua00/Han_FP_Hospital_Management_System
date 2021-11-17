@@ -2,7 +2,6 @@
 using Han_FP_Hospital_Management_System.ViewModels;
 using HospitalManagement.Common.Common;
 using HospitalManagement.Common.DTO;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +12,7 @@ namespace Han_FP_Hospital_Management_System
     class Program
     {
         private static IHospitalManagementViewModel vm;
+        
         static void Main(string[] args)
         {
 
@@ -120,13 +120,13 @@ namespace Han_FP_Hospital_Management_System
                         bool logonResult= vm.LogOn(sID, sPassword);
                         if(logonResult)
                         {
-                            switch(vm.CurrentUser.Type)
+                            switch(vm.GetUser(sID).Type)
                             {
                                 case UserType.Admin:
-                                    AdminMenu(userManager.CurrentUser.ID);
+                                    AdminMenu(sID);
                                     break;
                                 case UserType.Worker:
-                                    WorkerMenu(userManager.CurrentUser.ID);
+                                    WorkerMenu(sID);
                                     break;
                             }
                         }
@@ -582,10 +582,9 @@ namespace Han_FP_Hospital_Management_System
                             Console.Write("Enter patient ID: ");
                             patientID = Convert.ToInt32(Console.ReadLine());
                             Console.WriteLine();
-                            Console.WriteLine("Generating bill for patient...\n");
+                            Console.WriteLine("Generating bill for patient...\n");                           
 
-                            int BillID = _config.TotalBillCounter;
-                            double gst = _config.Gst;
+                            int BillID = 0;
                             Console.WriteLine("How much subsidies does the patient have? (%)");
                             double subsidy = Convert.ToDouble(Console.ReadLine());
                             double totalAmt = vm.CalculateTotalBill(patientID);
@@ -814,7 +813,7 @@ namespace Han_FP_Hospital_Management_System
             Console.WriteLine("Enter patient's address: ");
             string pAddress = Console.ReadLine();
 
-            int totalRegistration = _config.TotalPatientRegistration;
+            int totalRegistration = 0;
 
             PatientDTO newPatient;
 
