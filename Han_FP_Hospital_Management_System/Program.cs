@@ -17,7 +17,6 @@ namespace Han_FP_Hospital_Management_System
         {
 
             vm = new HospitalManagementViewModel();
-            vm.Initialize();
 
             try
             {
@@ -594,7 +593,7 @@ namespace Han_FP_Hospital_Management_System
                             patientID = Convert.ToInt32(Console.ReadLine());
                             Console.WriteLine("Enter bill ID for confirmation: ");
                             BillID = Convert.ToInt32(Console.ReadLine());
-                            vm.DischargePatient(patientID, BillID);
+
                             break;
                         case 5:
                             Console.WriteLine("Taking a break so soon? There's still many things to do.\n");

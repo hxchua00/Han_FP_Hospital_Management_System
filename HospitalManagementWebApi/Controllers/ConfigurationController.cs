@@ -20,15 +20,17 @@ namespace HospitalManagementWebApi.Controllers
 
         [HttpPatch]
         [Route("IncreasePatientCount")]
-        public void IncreatementTotalPatientCounter()
+        public IHttpActionResult IncreatementTotalPatientCounter()
         {
             TotalPatientRegistration++;
+            return Ok("Total Patient Count has increased by 1");
         }
         [HttpPatch]
         [Route("IncreaseBillCount")]
-        public void IncreatementTotaBillCounter()
+        public IHttpActionResult IncreatementTotaBillCounter()
         {
             TotalBillCounter++;
+            return Ok("Total Bill Count has increased by 1");
         }
     }
 }

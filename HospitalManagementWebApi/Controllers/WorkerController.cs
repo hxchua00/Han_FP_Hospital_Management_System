@@ -48,6 +48,7 @@ namespace HospitalManagementWebApi.Controllers
             if(visitRecord != null)
             {
                 HMdBContext.VisitRecords.Add(MapToModel(visitRecord));
+                patient.VisitHistory = MapToDTO(visitRecord);
                 HMdBContext.SaveChanges();
                 return Ok($"Visit record for {patient.PatientName} succesfully added");
             }
@@ -73,7 +74,7 @@ namespace HospitalManagementWebApi.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPatch]
         [Route("CalculateTotalBill")]
         public double CalculateTotalBill(int ID, double subsidy)
         {
@@ -126,8 +127,15 @@ namespace HospitalManagementWebApi.Controllers
         [Route("GetPatientName")]
         public string GetPatientName(int ID)
         {
-            //return NameOfPatient;
-            return HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault().PatientName;
+            Patient TargetPatient = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
+
+            if (TargetPatient != null)
+            {
+                string pName = TargetPatient.PatientName;
+
+                return pName;
+            }
+            return ("Patient not found");
 
         }
 
@@ -136,7 +144,14 @@ namespace HospitalManagementWebApi.Controllers
         //Returns Department the patient is admitted to
         public DepartmentEnum GetPatientDept(int ID)
         {
-            return HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault().VisitHistory.FirstOrDefault().Department;
+            Patient TargetPatient = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
+
+            if (TargetPatient != null)
+            {
+                DepartmentEnum pDept = TargetPatient.VisitHistory.FirstOrDefault().Department;
+                return pDept;
+            }
+            throw new Exception("Patient not found");
         }
 
         [HttpGet]
@@ -144,14 +159,30 @@ namespace HospitalManagementWebApi.Controllers
         //Returns Ward the patient is admitted to
         public WardEnum GetPatientWard(int ID)
         {
-            return HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault().VisitHistory.FirstOrDefault().Ward;
+            Patient TargetPatient = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
+
+            if (TargetPatient != null)
+            {
+                WardEnum pWard = TargetPatient.VisitHistory.FirstOrDefault().Ward;
+
+                return pWard;
+            }
+            throw new Exception("Patient not found");
         }
         [HttpGet]
         [Route("GetPatientMeds")]
         //Returns list of medicines from VisitHistory
         public List<string> GetPatientMedicineList(int ID)
         {
-            return HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault().VisitHistory.FirstOrDefault().ListOfMedicines;
+            Patient TargetPatient = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
+
+            if (TargetPatient != null)
+            {
+                List<string> pMeds = TargetPatient.VisitHistory.FirstOrDefault().ListOfMedicines;
+
+                return pMeds;
+            }
+            throw new Exception("Patient not found");
         }
 
         [HttpGet]

@@ -1,4 +1,6 @@
-﻿namespace HospitalManagementWebApi.Interfaces
+﻿using System.Web.Http;
+
+namespace HospitalManagementWebApi.Interfaces
 {
     public interface IConfigurationController
     {
@@ -6,7 +8,7 @@
 
         int TotalBillCounter { get; }
         double Gst { get; }
-        void IncreatementTotalPatientCounter();
-        void IncreatementTotaBillCounter();
+        IHttpActionResult IncreatementTotalPatientCounter();
+        IHttpActionResult IncreatementTotaBillCounter();
     }
 }
