@@ -1,11 +1,11 @@
-﻿using HospitalManagement.Common.DTO;
-using System.Collections.Generic;
+﻿using HospitalManagement.Common.Common;
+using System.Web.Http;
 
 namespace HospitalManagementWebApi.Interfaces
 {
     interface IAdminController
     {
-        (List<PatientDTO>, List<PatientDTO>, List<PatientDTO>) PrintAllDepartments();
-        List<BillDTO> PrintAllBills();
+        IHttpActionResult GetPatientByDepartment(DepartmentEnum departmentType);
+        IHttpActionResult PrintAllBills();
     }
 }

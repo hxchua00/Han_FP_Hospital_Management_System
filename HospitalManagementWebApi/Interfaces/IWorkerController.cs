@@ -5,15 +5,13 @@ using System.Web.Http;
 
 namespace HospitalManagementWebApi.Interfaces
 {
-    public interface IHospitalController
+    public interface IWorkerController
     {
-        void Initialize();
         IHttpActionResult AddPatient(PatientDTO p);
         IHttpActionResult AdmitPatient(int ID, PatientVisitRecordDTO visitRecord);
-        IHttpActionResult DischargePatient(int ID, int BillID);
-        PatientDTO ViewPatientInfo(int ID);
+        IHttpActionResult ViewPatientInfo(int ID);
         double CalculateTotalBill(int ID, double subsidy);
-        void SettleBill(int ID, int BillID);
+        IHttpActionResult SettleBill(int ID, int BillID);
         string GetPatientName(int ID);
         DepartmentEnum GetPatientDept(int ID);
         WardEnum GetPatientWard(int ID);

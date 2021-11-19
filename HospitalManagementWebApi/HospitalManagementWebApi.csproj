@@ -91,6 +91,7 @@
     <Compile Include="Controllers\ConfigurationController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="DBContext\HospitalDbInitializer.cs" />
     <Compile Include="DBContext\HospitalManagementDBContext.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Utility\UtilityManager.cs" />
@@ -100,7 +101,7 @@
     </Compile>
     <Compile Include="Interfaces\IAdminController.cs" />
     <Compile Include="Interfaces\IConfigurationController.cs" />
-    <Compile Include="Interfaces\IHospitalController.cs" />
+    <Compile Include="Interfaces\IWorkerController.cs" />
     <Compile Include="Interfaces\IUserController.cs" />
     <Compile Include="Interfaces\IUtilityManager.cs" />
     <Compile Include="Models\Bill.cs" />
@@ -118,9 +119,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\HospitalManagement.Common\HospitalManagement.Common.csproj">
       <Project>{3809b8a4-cfa5-495d-a1ca-cf8fd03db7c8}</Project>

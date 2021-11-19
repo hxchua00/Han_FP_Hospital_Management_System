@@ -1,167 +1,125 @@
-﻿using System;
+﻿using HospitalManagement.Common.Common;
+using HospitalManagement.Common.DTO;
+using HospitalManagementWebApi.DBContext;
+using HospitalManagementWebApi.Interfaces;
+using HospitalManagementWebApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
-using System.IO;
-using Newtonsoft.Json;
-using HospitalManagementWebApi.Models;
-using HospitalManagementWebApi.Interfaces;
-using HospitalManagement.Common.Common;
-using HospitalManagement.Common.DTO;
 
 namespace HospitalManagementWebApi.Controllers
 {
     [RoutePrefix("api/Worker")]
-    public class WorkerController : ApiController, IHospitalController
-    {
-        List<Patient> AllPatientInfo = new List<Patient>();            //Stores all pateint information
-        IConfigurationController _config;
+    public class WorkerController : ApiController, IWorkerController
+    { 
+        private IConfigurationController _config;
+        private HospitalManagementDBContext HMdBContext;
         public WorkerController()
         {
+            HMdBContext = new HospitalManagementDBContext();
             _config = new ConfigurationController(); ;
-            Initialize();
-        }
-        
-        public void Initialize()
-        {
-            if (!File.Exists("Patient_Information.Json"))
-            {
-                string CreatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
-                File.WriteAllText("Patient_Information.Json", CreatePatientJson);
-            }
-            var patientList = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
-            AllPatientInfo.AddRange(patientList);
         }
 
         [HttpPost]
         [Route("AddPatient")]
         //Add new patient to database
-        public IHttpActionResult AddPatient(PatientDTO patient)
+        public IHttpActionResult AddPatient(PatientDTO patientdto)
         {
-            AllPatientInfo = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
-
-            //Add patient info to list
-            if (patient != null)
+            if(patientdto != null)
             {
-                AllPatientInfo.Add(MapToModel(patient));
-                _config.IncreatementTotalPatientCounter();
-                _config.IncreatementTotaBillCounter();
-
-                string UpdatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
-                File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
-                return Ok("New Patient added succcesfully.");
+                HMdBContext.PatientList.Add(MapToModel(patientdto));
+                HMdBContext.SaveChanges();
+                return Ok($"Successfully added {patientdto.PatientName}, Patient ID: {patientdto.PatientID}");
             }
-            return BadRequest("Patient cannot be added now.");
+            else
+            {
+                return BadRequest("Error adding patient information");
+            }
         }
+
         [HttpPatch]
         [Route("AdmitPatient")]
         //Admit the patient to the respective department
         //Inclusive of consultation of doctors.
         public IHttpActionResult AdmitPatient(int ID, PatientVisitRecordDTO visitRecord)
         {
-            Patient patientToAdmit = AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault();
-
+            Patient patient = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
             if(visitRecord != null)
             {
-                patientToAdmit.VisitHistory.Add(MapToModel(visitRecord));
-
-                string UpdatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
-                File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
-
-                return Ok("Patient admitted successfully");
+                HMdBContext.VisitRecords.Add(MapToModel(visitRecord));
+                HMdBContext.SaveChanges();
+                return Ok($"Visit record for {patient.PatientName} succesfully added");
             }
-            return BadRequest("Error admitting the patient");
-        }
-
-        [HttpPut]
-        [Route("DischargePatient")]
-        //Remove Patient from the List, but data still remain for future reference
-        public IHttpActionResult DischargePatient(int ID, int BillID)
-        {
-            Patient PatientToDischarge = AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault();
-            List<Patient> DischargedPatients = new List<Patient>();
-
-            for (int j = 0; j < PatientToDischarge.VisitHistory.Count; j++)
+            else
             {
-                Bill TargetBill = PatientToDischarge.VisitHistory[j].BillInformation;
-                if (TargetBill.BillID == BillID)
-                {
-                    if (TargetBill.Status == BillStatusEnum.Paid)
-                    {
-                        DischargedPatients.Add(PatientToDischarge);
-
-                        string DischargedPaitentList = JsonConvert.SerializeObject(DischargedPatients);
-                        File.WriteAllText("DischargedPatient.Json", DischargedPaitentList);
-
-                        AllPatientInfo.Remove(PatientToDischarge);
-                        string UpdatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
-                        File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
-
-                        return Ok("Patient successfully discharged.");
-                    }
-                }
+                return BadRequest("Error adding visit record information");
             }
-            var UpdatedDischargedList = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("DischargedPatient.Json"));
-            DischargedPatients.AddRange(UpdatedDischargedList);
-
-            return BadRequest("Patient cannot be discharged now.");
         }
 
         [HttpGet]
         [Route("ViewPatientInfo")]
         //Search through database for Patient's Information via Reference ID given to them
-        public PatientDTO ViewPatientInfo(int ID)
+        public IHttpActionResult ViewPatientInfo(int ID)
         {
-            IList<Patient> WritePatientInfo = JsonConvert.DeserializeObject<List<Patient>>(File.ReadAllText("Patient_Information.Json"));
-            Patient TargetPatient = WritePatientInfo.Where(x => x.PatientID == ID).FirstOrDefault();
-
-            return MapToDTO(TargetPatient);
+            Patient patient = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
+            if (patient != null)
+            {
+                return Ok(MapToDTO(patient));
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet]
         [Route("CalculateTotalBill")]
         public double CalculateTotalBill(int ID, double subsidy)
         {
-            Patient TargetPatient = AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault();
-            double TotalBill = 0;
-            double FinalBill = 0;
-
+            Patient BillPayment = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
             int nights = Convert.ToInt32(Console.ReadLine());
-
             double DeptPrice = GetDepartmentPrice(ID);
             double WardPrice = (GetWardPrice(ID) * nights);
             double MedPrice = GetMedicinePrice(ID);
-
-            TotalBill = DeptPrice + WardPrice + MedPrice;
+            double TotalBill = DeptPrice + WardPrice + MedPrice;
             double GST = TotalBill * _config.Gst;
             double subsidisedAmt=0;
             if (subsidy != 0)
             {
                 subsidisedAmt = TotalBill * (subsidy / 100);
             }
-
-            FinalBill = (TotalBill + GST) - subsidisedAmt;
-
+            double FinalBill = TotalBill + GST - subsidisedAmt;
+            foreach (PatientVisitRecord history in BillPayment.VisitHistory)
+            {
+                if (history.BillInformation != null && 
+                    history.BillInformation.Status == BillStatusEnum.Paid)
+                    continue;
+                else if(history.BillInformation==null)
+                {
+                    Bill bill = new Bill();
+                    bill.BillID = _config.TotalBillCounter + 1;
+                    bill.GST = GST;
+                    bill.Subsidy = subsidy;
+                    bill.TotalAmount = FinalBill;
+                    bill.Status = BillStatusEnum.Unpaid;
+                    HMdBContext.SaveChanges();
+                }
+            }
             return FinalBill;
         }
 
         [HttpPatch]
         [Route("PayBill")]
-        public void SettleBill(int ID, int BillID)
+        public IHttpActionResult SettleBill(int ID, int BillID)
         {
-            Patient BillPayment = AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault();
-            for (int i = 0; i < BillPayment.VisitHistory.Count; i++)
+            Bill BillPayment = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault().VisitHistory.Where(x=>x.BillInformation.BillID==BillID).FirstOrDefault().BillInformation;
+            if(BillPayment!=null)
             {
-                Bill TargetBill = BillPayment.VisitHistory[i].BillInformation;
-                if (TargetBill.Status == BillStatusEnum.Unpaid)
-                {
-                    TargetBill.Status = BillStatusEnum.Paid;
-                }
+                BillPayment.Status = BillStatusEnum.Paid;
+                return Ok("Bill Paid Successfully");
             }
-
-            string UpdatePatientJson = JsonConvert.SerializeObject(AllPatientInfo);
-            File.WriteAllText("Patient_Information.Json", UpdatePatientJson);
-
+            return BadRequest("No Bills to pay!!!");
         }
 
         [HttpGet]
@@ -169,7 +127,7 @@ namespace HospitalManagementWebApi.Controllers
         public string GetPatientName(int ID)
         {
             //return NameOfPatient;
-            return AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault().PatientName;
+            return HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault().PatientName;
 
         }
 
@@ -178,7 +136,7 @@ namespace HospitalManagementWebApi.Controllers
         //Returns Department the patient is admitted to
         public DepartmentEnum GetPatientDept(int ID)
         {
-            return AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault().VisitHistory.FirstOrDefault().Department;
+            return HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault().VisitHistory.FirstOrDefault().Department;
         }
 
         [HttpGet]
@@ -186,14 +144,14 @@ namespace HospitalManagementWebApi.Controllers
         //Returns Ward the patient is admitted to
         public WardEnum GetPatientWard(int ID)
         {
-            return AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault().VisitHistory.FirstOrDefault().Ward;
+            return HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault().VisitHistory.FirstOrDefault().Ward;
         }
         [HttpGet]
         [Route("GetPatientMeds")]
         //Returns list of medicines from VisitHistory
         public List<string> GetPatientMedicineList(int ID)
         {
-            return AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault().VisitHistory.FirstOrDefault().ListOfMedicines;
+            return HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault().VisitHistory.FirstOrDefault().ListOfMedicines;
         }
 
         [HttpGet]
@@ -281,7 +239,7 @@ namespace HospitalManagementWebApi.Controllers
 
         public bool ValidatePatient(int ID)
         {
-            Patient pObj = AllPatientInfo.Where(x => x.PatientID == ID).FirstOrDefault();
+            Patient pObj = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
             if (pObj != null)
                 return true;
             else
