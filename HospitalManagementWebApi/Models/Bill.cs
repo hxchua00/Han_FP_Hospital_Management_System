@@ -1,9 +1,13 @@
 ﻿using HospitalManagement.Common.Common;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HospitalManagementWebApi.Models
 {
+    [Table("Bills")]
     public class Bill
     {
+        [Key]
         public int BillID { get; set; }                     //Unique Identity for each bill generated
         public double GST { get; set; }                     //Government Service Tax
         public double Subsidy { get; set; }                 //Subsidies for the bill, if any. Default is none.

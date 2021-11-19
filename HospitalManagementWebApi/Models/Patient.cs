@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using HospitalManagement.Common.Common;
 
 namespace HospitalManagementWebApi.Models
-
 {
+    [Table("PatientList")]
     public class Patient
-    {   
+    {
+        
+        [Key]
         public int PatientID { get; set; }                  //Unique ID for patients
         public string PatientName { get; set; }             //Name of Patient
         public double PatientWeight { get; set; }           //Weight of Patient

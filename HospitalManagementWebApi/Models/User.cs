@@ -1,11 +1,15 @@
 ﻿using HospitalManagement.Common.Common;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HospitalManagementWebApi.Models
 {
+    [Table("Users")]
     public class User
     {
-        public string Name { get; private set; }
+        [Key]
         public int ID { get; private set; }
+        public string Name { get; private set; }
         public string HashedPassword { get; private set; }
         public UserType Type { get; private set; }
         public User() { }

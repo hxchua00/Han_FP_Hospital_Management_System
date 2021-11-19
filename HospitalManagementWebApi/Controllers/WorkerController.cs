@@ -24,7 +24,7 @@ namespace HospitalManagementWebApi.Controllers
         [HttpPost]
         [Route("AddPatient")]
         //Add new patient to database
-        public IHttpActionResult AddPatient(PatientDTO patientdto)
+        public IHttpActionResult AddPatient([FromBody]PatientDTO patientdto)
         {
             if(patientdto != null)
             {
@@ -42,7 +42,7 @@ namespace HospitalManagementWebApi.Controllers
         [Route("AdmitPatient")]
         //Admit the patient to the respective department
         //Inclusive of consultation of doctors.
-        public IHttpActionResult AdmitPatient(int ID, PatientVisitRecordDTO visitRecord)
+        public IHttpActionResult AdmitPatient(int ID, [FromBody]PatientVisitRecordDTO visitRecord)
         {
             Patient patient = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
             if(visitRecord != null)

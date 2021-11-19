@@ -5,7 +5,7 @@ namespace HospitalManagementWebApi.DBContext
 {
     public class HospitalManagementDBContext : DbContext
     {
-        public HospitalManagementDBContext() : base()
+        public HospitalManagementDBContext() : base("Name=HospitalManagementDBConnectionString")
         {
             Database.SetInitializer(new HospitalDbInitializer());
         }

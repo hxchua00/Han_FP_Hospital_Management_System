@@ -16,12 +16,8 @@ namespace Han_FP_Hospital_Management_System.ViewModels
         {
             _hospitalManagementClient = new HttpClient();
             _hospitalManagementClient.BaseAddress = new Uri("https://localhost:44391/api");
-            Initialize();
         }
-        public void Initialize()
-        {
-            
-        }
+
         public PatientDTO AddPatient(PatientDTO patient)
         {
             Task<string> responseBody;
@@ -74,25 +70,6 @@ namespace Han_FP_Hospital_Management_System.ViewModels
             }
 
             return totalAmt;
-        }
-
-        public PatientDTO DischargePatient(int ID, int BillID)
-        {
-            Task<string> responseBody;
-            var response = _hospitalManagementClient.GetAsync("api/Worker/DischargePatient");
-            response.Wait();
-            if (response.Result.IsSuccessStatusCode)
-            {
-                Console.WriteLine("Patient discharged successfully!");
-                responseBody = response.Result.Content.ReadAsStringAsync();
-                responseBody.Wait();
-                return JsonConvert.DeserializeObject<PatientDTO>(responseBody.Result);
-            }
-            else
-            {
-                responseBody = response.Result.Content.ReadAsStringAsync();
-                throw new Exception(responseBody.Result);
-            }
         }
 
         public double GetDepartmentPrice(int ID)

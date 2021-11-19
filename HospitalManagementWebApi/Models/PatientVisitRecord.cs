@@ -1,10 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using HospitalManagement.Common.Common;
 
 namespace HospitalManagementWebApi.Models
 {
+    [Table("VisitRecords")]
     public class PatientVisitRecord
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public DoctorsEnum DoctorInCharge { get; private set; }     //Name of Doctor In Charge
         public DepartmentEnum Department { get; private set; }         //Department the Patient is admitted to
         public WardEnum Ward { get; private set; }               // Ward that the patient admitted to
