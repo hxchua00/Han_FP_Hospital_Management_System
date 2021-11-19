@@ -48,7 +48,7 @@ namespace HospitalManagementWebApi.Controllers
             if(visitRecord != null)
             {
                 HMdBContext.VisitRecords.Add(MapToModel(visitRecord));
-                patient.VisitHistory = MapToDTO(visitRecord);
+                //patient.VisitHistory = MapToDTO(visitRecord);
                 HMdBContext.SaveChanges();
                 return Ok($"Visit record for {patient.PatientName} succesfully added");
             }
