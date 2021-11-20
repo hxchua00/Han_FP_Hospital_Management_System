@@ -3,9 +3,11 @@ using HospitalManagement.Common.Common;
 using HospitalManagement.Common.DTO;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace Han_FP_Hospital_Management_System.ViewModels
 {
@@ -15,17 +17,18 @@ namespace Han_FP_Hospital_Management_System.ViewModels
         internal HospitalManagementViewModel()
         {
             _hospitalManagementClient = new HttpClient();
-            _hospitalManagementClient.BaseAddress = new Uri("https://localhost:44391/api");
+            _hospitalManagementClient.BaseAddress = new Uri("https://localhost:44391/");
         }
 
         public PatientDTO AddPatient(PatientDTO patient)
         {
             Task<string> responseBody;
-            var response = _hospitalManagementClient.GetAsync("api/Worker/AddPatient");
+            
+            StringContent queryString = new StringContent(JsonConvert.SerializeObject(patient), Encoding.UTF8, "application/json");
+            var response = _hospitalManagementClient.PostAsync("https://localhost:44391/api/Worker/AddStaff", queryString);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
-                Console.WriteLine("Patient added successfully!");
                 responseBody = response.Result.Content.ReadAsStringAsync();
                 responseBody.Wait();
                 return JsonConvert.DeserializeObject<PatientDTO>(responseBody.Result);
@@ -40,11 +43,12 @@ namespace Han_FP_Hospital_Management_System.ViewModels
         public PatientVisitRecordDTO AdmitPatient(int ID, PatientVisitRecordDTO visitRecord)
         {
             Task<string> responseBody;
-            var response = _hospitalManagementClient.GetAsync("api/Worker/AdmitPatient");
+
+            StringContent queryString = new StringContent(JsonConvert.SerializeObject(visitRecord), Encoding.UTF8, "application/json");
+            var response = _hospitalManagementClient.PostAsync("https://localhost:44391/api/Worker/AdmitPatient", queryString);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
-                Console.WriteLine("Patient admitted successfully!");
                 responseBody = response.Result.Content.ReadAsStringAsync();
                 responseBody.Wait();
                 return JsonConvert.DeserializeObject<PatientVisitRecordDTO>(responseBody.Result);
@@ -56,26 +60,30 @@ namespace Han_FP_Hospital_Management_System.ViewModels
             }
         }
 
-        public double CalculateTotalBill(int ID)
+        public BillDTO GenerateBill(int ID)
         {
-            double totalAmt = 0;
-            var responseTask = _hospitalManagementClient.GetAsync("api/Worker/CalculateTotalBill/" + ID);
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
+            Task<string> responseBody;
+            BillDTO billDTO = new BillDTO();
+            StringContent queryString = new StringContent(JsonConvert.SerializeObject(billDTO), Encoding.UTF8, "application/json");
+            var response = _hospitalManagementClient.PutAsync("https://localhost:44391/api/Worker/GenerateBill?ID=" + ID, queryString);
+            response.Wait();
+            if (response.Result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsStringAsync();
-                readTask.Wait();
-                totalAmt = Convert.ToDouble(readTask.Result);
+                responseBody = response.Result.Content.ReadAsStringAsync();
+                responseBody.Wait();
+                return JsonConvert.DeserializeObject<BillDTO>(responseBody.Result);
             }
-
-            return totalAmt;
+            else
+            {
+                responseBody = response.Result.Content.ReadAsStringAsync();
+                throw new Exception(responseBody.Result);
+            }
         }
 
         public double GetDepartmentPrice(int ID)
         {
             double deptPrice = 0;
-            var responseTask = _hospitalManagementClient.GetAsync("api/Worker/GetDepartmentPrice/" + ID);
+            var responseTask = _hospitalManagementClient.GetAsync("https://localhost:44391/api/Worker/GetDepartmentPrice?ID=" + ID);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
@@ -91,7 +99,7 @@ namespace Han_FP_Hospital_Management_System.ViewModels
         public double GetMedicinePrice(int ID)
         {
             double medPrice = 0;
-            var responseTask = _hospitalManagementClient.GetAsync("api/Worker/GetMedicinePrice/" + ID);
+            var responseTask = _hospitalManagementClient.GetAsync("https://localhost:44391/api/Worker/GetMedicinePrice?ID=" + ID);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
@@ -107,7 +115,7 @@ namespace Han_FP_Hospital_Management_System.ViewModels
         public double GetWardPrice(int ID)
         {
             double wardPrice = 0;
-            var responseTask = _hospitalManagementClient.GetAsync("api/Worker/GetWardPrice/" + ID);
+            var responseTask = _hospitalManagementClient.GetAsync("https://localhost:44391/api/Worker/GetWardPrice?ID=" + ID);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
@@ -123,7 +131,7 @@ namespace Han_FP_Hospital_Management_System.ViewModels
         public DepartmentEnum GetPatientDept(int ID)
         {
             DepartmentEnum dept = DepartmentEnum.Invalid;
-            var responseTask = _hospitalManagementClient.GetAsync("api/Worker/GetPatientDept/" + ID);
+            var responseTask = _hospitalManagementClient.GetAsync("https://localhost:44391/api/Worker/GetPatientDept?ID=" + ID);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
@@ -139,7 +147,7 @@ namespace Han_FP_Hospital_Management_System.ViewModels
         public ICollection<string> GetPatientMedicineList(int ID)
         {
             Task<string> responseBody;
-            var response = _hospitalManagementClient.GetAsync("api/Worker/GetPatientMeds");
+            var response = _hospitalManagementClient.GetAsync("https://localhost:44391/api/Worker/GetPatientMeds?ID=" + ID);
             if (response.Result.IsSuccessStatusCode)
             {
                 responseBody = response.Result.Content.ReadAsStringAsync();
@@ -156,7 +164,7 @@ namespace Han_FP_Hospital_Management_System.ViewModels
         public string GetPatientName(int ID)
         {
             string pName = "";
-            var responseTask = _hospitalManagementClient.GetAsync("api/Worker/GetPatientName/" + ID);
+            var responseTask = _hospitalManagementClient.GetAsync("https://localhost:44391/api/Worker/GetPatientName?ID=" + ID);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
@@ -169,10 +177,26 @@ namespace Han_FP_Hospital_Management_System.ViewModels
             return pName;
         }
 
+        public int GetPatientVisitRecordsCount(int ID)
+        {
+            int count = 0;
+            var responseTask = _hospitalManagementClient.GetAsync("https://localhost:44391/api/Worker/GetPatientVisitRecordsCount?ID=" + ID);
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsStringAsync();
+                readTask.Wait();
+                count = Convert.ToInt32(readTask.Result);
+            }
+
+            return count;
+        }
+
         public WardEnum GetPatientWard(int ID)
         {
             WardEnum ward = WardEnum.Invalid;
-            var responseTask = _hospitalManagementClient.GetAsync("api/Worker/GetPatientDept/" + ID);
+            var responseTask = _hospitalManagementClient.GetAsync("https://localhost:44391/api/Worker/GetPatientDept?ID=" + ID);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
@@ -188,7 +212,7 @@ namespace Han_FP_Hospital_Management_System.ViewModels
         public UserDTO GetUser(int userID)
         {
             Task<string> responseBody;
-            var response = _hospitalManagementClient.GetAsync("api/UserManager/GetUser");
+            var response = _hospitalManagementClient.GetAsync("https://localhost:44391/api/UserManager/GetUser");
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
@@ -206,11 +230,10 @@ namespace Han_FP_Hospital_Management_System.ViewModels
         public bool LogOn(int userId, string password)
         {
             Task<string> responseBody;
-            var response = _hospitalManagementClient.GetAsync($"api/UserManager/VerifyLogin");
+            var response = _hospitalManagementClient.GetAsync($"https://localhost:44391/api/User/VerifyLogin?id=" + userId + "&password=" + password);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
-                Console.WriteLine("Login success!");
                 responseBody = response.Result.Content.ReadAsStringAsync();
                 responseBody.Wait();
                 return bool.Parse(responseBody.Result);
@@ -225,7 +248,7 @@ namespace Han_FP_Hospital_Management_System.ViewModels
         public ICollection<BillDTO> PrintAllBills()
         {
             Task<string> responseBody;
-            var response = _hospitalManagementClient.GetAsync("api/Admin/PrintAllBills");
+            var response = _hospitalManagementClient.GetAsync("https://localhost:44391/api/Admin/PrintAllBills");
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
@@ -241,17 +264,15 @@ namespace Han_FP_Hospital_Management_System.ViewModels
             }
         }
 
-        public ICollection<PatientDTO> PrintAllDepartments()
+        public ICollection<PatientDTO> GetPatientByDepartment(DepartmentEnum departmentType)
         {
             Task<string> responseBody;
-            var response = _hospitalManagementClient.GetAsync("api/Admin/PrintAllDepartments");
-            response.Wait();
+            var response = _hospitalManagementClient.GetAsync($"https://localhost:44391/api/Admin/GetPatientByDepartment?departmentType=" + departmentType);
             if (response.Result.IsSuccessStatusCode)
             {
-                Console.WriteLine("Patient added successfully!");
                 responseBody = response.Result.Content.ReadAsStringAsync();
                 responseBody.Wait();
-                return null;
+                return JsonConvert.DeserializeObject<ICollection<PatientDTO>>(responseBody.Result);
             }
             else
             {
@@ -263,14 +284,15 @@ namespace Han_FP_Hospital_Management_System.ViewModels
         public BillDTO SettleBill(int ID, int BillID)
         {
             Task<string> responseBody;
-            var response = _hospitalManagementClient.GetAsync("api/Worker/PayBill");
+            var method = new HttpMethod("PATCH");
+            HttpRequestMessage request = new HttpRequestMessage(method, $"https://localhost:44391/api/Worker/SettleBill?ID=" + ID + "&BillID=" + BillID);
+            var response = _hospitalManagementClient.SendAsync(request);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
-                Console.WriteLine("Patient added successfully!");
                 responseBody = response.Result.Content.ReadAsStringAsync();
                 responseBody.Wait();
-                return null;
+                return JsonConvert.DeserializeObject<BillDTO>(responseBody.Result);
             }
             else
             {
@@ -282,7 +304,7 @@ namespace Han_FP_Hospital_Management_System.ViewModels
         public bool ValidatePatient(int ID)
         {
             Task<string> responseBody;
-            var response = _hospitalManagementClient.GetAsync("api/Worker/ValidatePatient");
+            var response = _hospitalManagementClient.GetAsync("https://localhost:44391/api/Worker/ValidatePatient?ID=" + ID);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
@@ -301,7 +323,7 @@ namespace Han_FP_Hospital_Management_System.ViewModels
         public PatientDTO ViewPatientInfo(int ID)
         {
             Task<string> responseBody;
-            var response = _hospitalManagementClient.GetAsync("api/Worker/ViewPatientInfo");
+            var response = _hospitalManagementClient.GetAsync("https://localhost:44391/api/Worker/ViewPatientInfo?ID=" + ID);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {

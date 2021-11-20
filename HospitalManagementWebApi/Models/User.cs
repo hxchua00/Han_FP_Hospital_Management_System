@@ -7,7 +7,6 @@ namespace HospitalManagementWebApi.Models
     [Table("Users")]
     public class User
     {
-        [Key]
         public int ID { get; private set; }
         public string Name { get; private set; }
         public string HashedPassword { get; private set; }

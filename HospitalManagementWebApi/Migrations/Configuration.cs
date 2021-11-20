@@ -18,9 +18,9 @@ namespace HospitalManagementWebApi.Migrations
             IUtilityManager _utility = new UtilityManager();
 
             //Admin Account
-            User AdminAccount = new User("Hospital Admin", 9999, _utility.ComputeSha256Hash("Admin123"), UserType.Admin);
+            User AdminAccount = new User("Hospital Admin", 2, _utility.ComputeSha256Hash("Admin123"), UserType.Admin);
             //WorkerAccount
-            User WorkerAccount = new User("Hospital Worker", 5555, _utility.ComputeSha256Hash("Worker321"), UserType.Worker);
+            User WorkerAccount = new User("Hospital Worker", 1, _utility.ComputeSha256Hash("Worker321"), UserType.Worker);
 
             HMcontext.Users.Add(WorkerAccount);
             HMcontext.Users.Add(AdminAccount);

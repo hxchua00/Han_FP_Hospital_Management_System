@@ -68,11 +68,11 @@ namespace HospitalManagementWebApi.Controllers
         private PatientVisitRecordDTO MapToDTO(PatientVisitRecord record)
         {
             BillDTO bidto = MapToDTO(record.BillInformation);
-            return new PatientVisitRecordDTO(record.DoctorInCharge, record.Department, record.Ward, record.StayDuration, record.ListOfSymptoms, record.ListOfMedicines, bidto);
+            return new PatientVisitRecordDTO(record.RecordNumber, record.DoctorInCharge, record.Department, record.Ward, record.ListOfSymptoms, record.ListOfMedicines, bidto, record.PatientID);
         }
         private BillDTO MapToDTO(Bill bill)
         {
-            return new BillDTO(bill.BillID, bill.GST, bill.Subsidy, bill.TotalAmount, bill.Status);
+            return new BillDTO(bill.BillID, bill.GST, bill.TotalAmount, bill.Status);
         }
     }
 }

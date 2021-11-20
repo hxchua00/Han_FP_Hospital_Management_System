@@ -359,7 +359,7 @@ namespace Han_FP_Hospital_Management_System
                                         cont = false;
                                         break;
                                     default:
-                                        Console.WriteLine("Invalid option! Please choose from the avaliable options only.\n");
+                                        Console.WriteLine("Unable to find symptom! \n");
                                         break;
                                 }      
                             }
@@ -401,7 +401,7 @@ namespace Han_FP_Hospital_Management_System
                                         cont = false;
                                         break;
                                     default:
-                                        Console.WriteLine("Invalid option! Please choose from the avaliable options only.\n");
+                                        Console.WriteLine("Medicine does not exist! \n");
                                         break;
                                 }
                             }
@@ -438,29 +438,20 @@ namespace Han_FP_Hospital_Management_System
                             int wardchoice = Convert.ToInt32(Console.ReadLine());
 
                             WardEnum ward;
-                            int duration = 0;
 
                             switch (wardchoice)
                             {
                                 case 1:
                                     ward = WardEnum.ClassA;
-                                    Console.WriteLine("Number of nights stayed in the ward: ");
-                                    duration = Convert.ToInt32(Console.ReadLine());
                                     break;
                                 case 2:
                                     ward = WardEnum.ClassB;
-                                    Console.WriteLine("Number of nights stayed in the ward: ");
-                                    duration = Convert.ToInt32(Console.ReadLine());
                                     break;
                                 case 3:
                                     ward = WardEnum.ClassC;
-                                    Console.WriteLine("Number of nights stayed in the ward: ");
-                                    duration = Convert.ToInt32(Console.ReadLine());
                                     break;
                                 case 4:
                                     ward = WardEnum.Private;
-                                    Console.WriteLine("Number of nights stayed in the ward: ");
-                                    duration = Convert.ToInt32(Console.ReadLine());
                                     break;
                                 case 5:
                                     ward = WardEnum.NIL;
@@ -471,14 +462,16 @@ namespace Han_FP_Hospital_Management_System
                                     break;
                             }
 
+                            int VisitHistoryCount = vm.GetPatientVisitRecordsCount(ID);
+
                             //Calls AdmitPatient
-                            if(department == DepartmentEnum.Invalid || ward == WardEnum.Invalid || DocInCharge == DoctorsEnum.Invalid)
+                            if (department == DepartmentEnum.Invalid || ward == WardEnum.Invalid || DocInCharge == DoctorsEnum.Invalid)
                             {
-                                Console.WriteLine("Invalid information detected. Unable to proceed with data recording.\n");
+                                Console.WriteLine("Invalid information detected! Unable to proceed with data recording.\n");
                             }
                             else
                             {
-                                PatientVisitRecordDTO newRecord = new PatientVisitRecordDTO(DocInCharge, department, ward, duration, Symptoms, Medicines, null);
+                                PatientVisitRecordDTO newRecord = new PatientVisitRecordDTO(VisitHistoryCount+1, DocInCharge, department, ward, Symptoms, Medicines, vm.GenerateBill(ID),ID);
                                 vm.AdmitPatient(ID, newRecord);
                             }
 
@@ -553,9 +546,7 @@ namespace Han_FP_Hospital_Management_System
                     Console.WriteLine("Please choose what to do: ");
                     Console.WriteLine("1) Add Patient");
                     Console.WriteLine("2) Find Patient");
-                    Console.WriteLine("3) Generate Bill for patient");
-                    Console.WriteLine("3) Discharge Patient");
-                    Console.WriteLine("4) Nothing\n");
+                    Console.WriteLine("3) Nothing\n");
 
                     int option = Convert.ToInt32(Console.ReadLine());
                     Console.Write($"Chosen option: {option}\n");
@@ -571,32 +562,14 @@ namespace Han_FP_Hospital_Management_System
                             Console.WriteLine("Enter Patient's ID: ");
                             patientID = Convert.ToInt32(Console.ReadLine());
                             Console.WriteLine();
-                            Console.WriteLine("Searching for patient...\n");
+                            Console.WriteLine("Searching for patient.... \n");
 
                             Console.WriteLine("==============================");
                             vm.ViewPatientInfo(patientID);
                             Console.WriteLine("==============================");
                             break;
                         case 3:
-                            Console.Write("Enter patient ID: ");
-                            patientID = Convert.ToInt32(Console.ReadLine());
-                            Console.WriteLine();
-                            Console.WriteLine("Generating bill for patient...\n");                           
-
-                            int BillID = 0;
-                            Console.WriteLine("How much subsidies does the patient have? (%)");
-                            double subsidy = Convert.ToDouble(Console.ReadLine());
-                            double totalAmt = vm.CalculateTotalBill(patientID);
-                            break;
-                        case 4:
-                            Console.WriteLine("Enter patient's ID here: ");
-                            patientID = Convert.ToInt32(Console.ReadLine());
-                            Console.WriteLine("Enter bill ID for confirmation: ");
-                            BillID = Convert.ToInt32(Console.ReadLine());
-
-                            break;
-                        case 5:
-                            Console.WriteLine("Taking a break so soon? There's still many things to do.\n");
+                            Console.WriteLine("Exiting Worker menu.... \n");
                             loop = false;
                             break;
                         default:
@@ -667,13 +640,33 @@ namespace Han_FP_Hospital_Management_System
                     switch (option)
                     {
                         case 1:
-                            vm.PrintAllDepartments();
+                            Console.WriteLine("Which department do you wish to view?");
+                            Console.WriteLine("1) OutPatient");
+                            Console.WriteLine("2) InPatient");
+                            Console.WriteLine("3) Emergency");
+                            int dept = Convert.ToInt32(Console.ReadLine());
+                            switch (dept)
+                            {
+                                case 1:
+                                    vm.GetPatientByDepartment(DepartmentEnum.Outpatient);
+                                    break;
+                                case 2:
+                                    vm.GetPatientByDepartment(DepartmentEnum.Inpatient);
+                                    break;
+                                case 3:
+                                    vm.GetPatientByDepartment(DepartmentEnum.Emergency);
+                                    break;
+                                default:
+                                    Console.WriteLine("No such department available");
+                                    break;
+                            }
+                            
                             break;
                         case 2:
                             vm.PrintAllBills();
                             break;
                         case 3:
-                            Console.WriteLine("Taking a break so soon? There's still many things to do.\n");
+                            Console.WriteLine("Exited Admin menu.... \n");
                             loop = false;
                             break;
                         default:

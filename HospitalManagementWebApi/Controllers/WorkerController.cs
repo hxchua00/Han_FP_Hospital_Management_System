@@ -38,7 +38,7 @@ namespace HospitalManagementWebApi.Controllers
             }
         }
 
-        [HttpPatch]
+        [HttpPost]
         [Route("AdmitPatient")]
         //Admit the patient to the respective department
         //Inclusive of consultation of doctors.
@@ -48,8 +48,10 @@ namespace HospitalManagementWebApi.Controllers
             if(visitRecord != null)
             {
                 HMdBContext.VisitRecords.Add(MapToModel(visitRecord));
-                //patient.VisitHistory = MapToDTO(visitRecord);
+                //patient.VisitHistory.Add(MapToModel(visitRecord));
+
                 HMdBContext.SaveChanges();
+
                 return Ok($"Visit record for {patient.PatientName} succesfully added");
             }
             else
@@ -74,44 +76,40 @@ namespace HospitalManagementWebApi.Controllers
             }
         }
 
-        [HttpPatch]
-        [Route("CalculateTotalBill")]
-        public double CalculateTotalBill(int ID, double subsidy)
+        [HttpPut]
+        [Route("GenerateBill")]
+        public BillDTO GenerateBill(int ID)
         {
-            Patient BillPayment = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
-            int nights = Convert.ToInt32(Console.ReadLine());
+            Patient TargetPatient = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
             double DeptPrice = GetDepartmentPrice(ID);
-            double WardPrice = (GetWardPrice(ID) * nights);
+            double WardPrice = (GetWardPrice(ID));
             double MedPrice = GetMedicinePrice(ID);
             double TotalBill = DeptPrice + WardPrice + MedPrice;
             double GST = TotalBill * _config.Gst;
-            double subsidisedAmt=0;
-            if (subsidy != 0)
-            {
-                subsidisedAmt = TotalBill * (subsidy / 100);
-            }
-            double FinalBill = TotalBill + GST - subsidisedAmt;
-            foreach (PatientVisitRecord history in BillPayment.VisitHistory)
+            
+            double FinalBill = TotalBill + GST;
+            
+            foreach (PatientVisitRecord history in TargetPatient.VisitHistory)
             {
                 if (history.BillInformation != null && 
                     history.BillInformation.Status == BillStatusEnum.Paid)
                     continue;
                 else if(history.BillInformation==null)
                 {
-                    Bill bill = new Bill();
+                    BillDTO bill = new BillDTO(_config.TotalBillCounter + 1, GST,FinalBill, BillStatusEnum.Unpaid);
                     bill.BillID = _config.TotalBillCounter + 1;
                     bill.GST = GST;
-                    bill.Subsidy = subsidy;
                     bill.TotalAmount = FinalBill;
                     bill.Status = BillStatusEnum.Unpaid;
                     HMdBContext.SaveChanges();
+                    return bill;
                 }
             }
-            return FinalBill;
+            throw new Exception("Unable to generate bill");
         }
 
         [HttpPatch]
-        [Route("PayBill")]
+        [Route("SettleBill")]
         public IHttpActionResult SettleBill(int ID, int BillID)
         {
             Bill BillPayment = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault().VisitHistory.Where(x=>x.BillInformation.BillID==BillID).FirstOrDefault().BillInformation;
@@ -181,6 +179,21 @@ namespace HospitalManagementWebApi.Controllers
                 List<string> pMeds = TargetPatient.VisitHistory.FirstOrDefault().ListOfMedicines;
 
                 return pMeds;
+            }
+            throw new Exception("Patient not found");
+        }
+
+        [HttpGet]
+        [Route("GetPatientVisitRecordsCount")]
+        public int GetPatientVisitRecordsCount(int ID)
+        {
+            Patient TargetPatient = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
+
+            if (TargetPatient != null)
+            {
+                int visitHistoryCount = TargetPatient.VisitHistory.Count;
+
+                return visitHistoryCount;
             }
             throw new Exception("Patient not found");
         }
@@ -301,21 +314,21 @@ namespace HospitalManagementWebApi.Controllers
         private PatientVisitRecordDTO MapToDTO(PatientVisitRecord record)
         {
             BillDTO bidto = MapToDTO(record.BillInformation);          
-            return new PatientVisitRecordDTO(record.DoctorInCharge,record.Department,record.Ward,record.StayDuration,record.ListOfSymptoms,record.ListOfMedicines, bidto);
+            return new PatientVisitRecordDTO(record.RecordNumber, record.DoctorInCharge,record.Department,record.Ward,record.ListOfSymptoms,record.ListOfMedicines, bidto, record.PatientID);
         }
         private PatientVisitRecord MapToModel(PatientVisitRecordDTO record)
         {
             Bill bidto = MapToModel(record.BillInformation);
-            return new PatientVisitRecord(record.DoctorInCharge, record.Department, record.Ward, record.StayDuration, record.ListOfSymptoms, record.ListOfMedicines, bidto);
+            return new PatientVisitRecord(record.RecordNumber, record.DoctorInCharge, record.Department, record.Ward, record.ListOfSymptoms, record.ListOfMedicines, bidto, record.PatientID);
         }
 
         private BillDTO MapToDTO(Bill bill)
         {
-            return new BillDTO(bill.BillID, bill.GST, bill.Subsidy, bill.TotalAmount, bill.Status);
+            return new BillDTO(bill.BillID, bill.GST, bill.TotalAmount, bill.Status);
         }
         private Bill MapToModel(BillDTO bill)
         {
-            return new Bill(bill.BillID, bill.GST, bill.Subsidy, bill.TotalAmount, bill.Status);
+            return new Bill(bill.BillID, bill.GST, bill.TotalAmount, bill.Status);
         }
     }
 }
