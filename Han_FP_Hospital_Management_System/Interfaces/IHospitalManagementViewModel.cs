@@ -6,7 +6,7 @@ namespace Han_FP_Hospital_Management_System.Interfaces
 {
     interface IHospitalManagementViewModel
     {
-        PatientDTO AddPatient(PatientDTO patient);
+        string AddPatient(PatientDTO patient);
         PatientVisitRecordDTO AdmitPatient(int ID, PatientVisitRecordDTO visitRecord);
         PatientDTO ViewPatientInfo(int ID);
         BillDTO GenerateBill(int ID);

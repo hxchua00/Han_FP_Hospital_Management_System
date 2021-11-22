@@ -93,7 +93,6 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="DBContext\HospitalDbInitializer.cs" />
     <Compile Include="DBContext\HospitalManagementDBContext.cs" />
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Utility\UtilityManager.cs" />
     <Compile Include="Controllers\WorkerController.cs" />
     <Compile Include="Global.asax.cs">
