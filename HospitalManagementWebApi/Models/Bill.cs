@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HospitalManagementWebApi.Models
 {
-    [Table("Bills")]
     public class Bill
     {
         [Key]

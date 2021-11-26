@@ -31,6 +31,10 @@ namespace HospitalManagement.Common.DTO
             PatientAge = pAge;
             VisitHistory = new List<PatientVisitRecordDTO>();
         }
+        public void AddPatientVisitRecord(PatientVisitRecordDTO record)
+        {
+            VisitHistory.Add(record);
+        }
         public void AddPatientVisitInformation(List<PatientVisitRecordDTO> record)
         {
             VisitHistory = record;

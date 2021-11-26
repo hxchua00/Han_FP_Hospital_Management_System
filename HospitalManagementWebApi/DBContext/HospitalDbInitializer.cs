@@ -11,7 +11,7 @@ namespace HospitalManagementWebApi.DBContext
     {
         public HospitalDbInitializer()
         {
-
+            
         }
 
         protected override void Seed(HospitalManagementDBContext context)

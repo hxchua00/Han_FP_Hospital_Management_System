@@ -39,18 +39,19 @@ namespace Han_FP_Hospital_Management_System.ViewModels
             }
         }
 
-        public PatientVisitRecordDTO AdmitPatient(int ID, PatientVisitRecordDTO visitRecord)
+        public string AdmitPatient(int ID, PatientVisitRecordDTO visitRecord)
         {
             Task<string> responseBody;
 
             StringContent queryString = new StringContent(JsonConvert.SerializeObject(visitRecord), Encoding.UTF8, "application/json");
-            var response = _hospitalManagementClient.PostAsync("api/Worker/AdmitPatient", queryString);
+            var response = _hospitalManagementClient.PostAsync("api/Worker/AdmitPatient?ID=" + ID, queryString);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
                 responseBody = response.Result.Content.ReadAsStringAsync();
                 responseBody.Wait();
-                return JsonConvert.DeserializeObject<PatientVisitRecordDTO>(responseBody.Result);
+                
+                return responseBody.Result;
             }
             else
             {
@@ -64,7 +65,7 @@ namespace Han_FP_Hospital_Management_System.ViewModels
             Task<string> responseBody;
             BillDTO billDTO = new BillDTO();
             StringContent queryString = new StringContent(JsonConvert.SerializeObject(billDTO), Encoding.UTF8, "application/json");
-            var response = _hospitalManagementClient.PutAsync("api/Worker/GenerateBill?ID=" + ID, queryString);
+            var response = _hospitalManagementClient.PostAsync("api/Worker/GenerateBill?ID=" + ID, queryString);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
@@ -206,6 +207,24 @@ namespace Han_FP_Hospital_Management_System.ViewModels
             }
 
             return ward;
+        }
+
+        public PatientDTO GetPatient(int userID)
+        {
+            Task<string> responseBody;
+            var response = _hospitalManagementClient.GetAsync("api/Worker/GetPatient?userID=" + userID);
+            response.Wait();
+            if (response.Result.IsSuccessStatusCode)
+            {
+                responseBody = response.Result.Content.ReadAsStringAsync();
+                responseBody.Wait();
+                return JsonConvert.DeserializeObject<PatientDTO>(responseBody.Result);
+            }
+            else
+            {
+                responseBody = response.Result.Content.ReadAsStringAsync();
+                throw new Exception(responseBody.Result);
+            }
         }
 
         public UserDTO GetUser(int userID)

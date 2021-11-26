@@ -87,7 +87,7 @@ namespace Han_FP_Hospital_Management_System
             catch (Exception)
             {
                 Console.WriteLine();
-                Console.WriteLine("Error! An exception has occured! Check your codes again!\n");
+                Console.WriteLine("Error! An exception has occured!\n");
             }
         }
 
@@ -246,11 +246,11 @@ namespace Han_FP_Hospital_Management_System
                 Console.WriteLine();
                 Console.WriteLine("Error! I/O Error has occured!\n");
             }
-            catch (Exception)
-            {
-                Console.WriteLine();
-                Console.WriteLine("Error! An exception has occured! Check your codes again!\n");
-            }
+            //catch (Exception)
+            //{
+            //    Console.WriteLine();
+            //    Console.WriteLine("Error! An exception has occured! Check your codes again!\n");
+            //}
         }
 
         //Features that Patients that can do
@@ -462,7 +462,10 @@ namespace Han_FP_Hospital_Management_System
                                     break;
                             }
 
-                            int VisitHistoryCount = vm.GetPatientVisitRecordsCount(ID);
+                            int count = vm.GetPatientVisitRecordsCount(ID);
+                            BillDTO newbill = new BillDTO();
+
+                            PatientDTO targetPatient = vm.GetPatient(ID);
 
                             //Calls AdmitPatient
                             if (department == DepartmentEnum.Invalid || ward == WardEnum.Invalid || DocInCharge == DoctorsEnum.Invalid)
@@ -471,7 +474,18 @@ namespace Han_FP_Hospital_Management_System
                             }
                             else
                             {
-                                PatientVisitRecordDTO newRecord = new PatientVisitRecordDTO(VisitHistoryCount+1, DocInCharge, department, ward, Symptoms, Medicines, vm.GenerateBill(ID),ID);
+                                PatientVisitRecordDTO newRecord = new PatientVisitRecordDTO(count, DocInCharge, department, ward, Symptoms, Medicines, newbill);
+                                targetPatient.AddPatientVisitRecord(newRecord);
+                                if(newRecord.BillInformation == null)
+                                {
+                                    foreach (PatientVisitRecordDTO record in targetPatient.VisitHistory)
+                                    {
+                                        if (record.PatientID == targetPatient)
+                                        {
+                                            newRecord.BillInformation = vm.GenerateBill(ID);
+                                        }
+                                    }
+                                }          
                                 vm.AdmitPatient(ID, newRecord);
                             }
 

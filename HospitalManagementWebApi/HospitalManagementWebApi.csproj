@@ -93,6 +93,11 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="DBContext\HospitalDbInitializer.cs" />
     <Compile Include="DBContext\HospitalManagementDBContext.cs" />
+    <Compile Include="Migrations\202111251801387_InitialMigration.cs" />
+    <Compile Include="Migrations\202111251801387_InitialMigration.designer.cs">
+      <DependentUpon>202111251801387_InitialMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Utility\UtilityManager.cs" />
     <Compile Include="Controllers\WorkerController.cs" />
     <Compile Include="Global.asax.cs">
@@ -118,7 +123,11 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202111251801387_InitialMigration.resx">
+      <DependentUpon>202111251801387_InitialMigration.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HospitalManagement.Common\HospitalManagement.Common.csproj">
       <Project>{3809b8a4-cfa5-495d-a1ca-cf8fd03db7c8}</Project>

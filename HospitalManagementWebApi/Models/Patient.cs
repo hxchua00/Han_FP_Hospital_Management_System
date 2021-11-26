@@ -6,7 +6,6 @@ using HospitalManagement.Common.Common;
 
 namespace HospitalManagementWebApi.Models
 {
-    [Table("PatientList")]
     public class Patient
     {
         [Key]
@@ -38,7 +37,7 @@ namespace HospitalManagementWebApi.Models
             VisitHistory = new List<PatientVisitRecord>();   
         }
 
-        public void AddPatientVisitInformation(PatientVisitRecord record)
+        public void AddPatientVisitRecord(PatientVisitRecord record)
         {
             VisitHistory.Add(record);
         }

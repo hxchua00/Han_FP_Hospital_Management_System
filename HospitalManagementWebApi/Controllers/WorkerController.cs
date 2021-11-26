@@ -74,13 +74,13 @@ namespace HospitalManagementWebApi.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("GenerateBill")]
         public BillDTO GenerateBill(int ID)
         {
             Patient TargetPatient = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
             double DeptPrice = GetDepartmentPrice(ID);
-            double WardPrice = (GetWardPrice(ID));
+            double WardPrice = GetWardPrice(ID);
             double MedPrice = GetMedicinePrice(ID);
             double TotalBill = DeptPrice + WardPrice + MedPrice;
             double GST = TotalBill * _config.Gst;
@@ -141,10 +141,16 @@ namespace HospitalManagementWebApi.Controllers
         public DepartmentEnum GetPatientDept(int ID)
         {
             Patient TargetPatient = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
-
+            DepartmentEnum pDept = DepartmentEnum.Invalid;
             if (TargetPatient != null)
             {
-                DepartmentEnum pDept = TargetPatient.VisitHistory.FirstOrDefault().Department;
+                foreach(PatientVisitRecord item in TargetPatient.VisitHistory)
+                {
+                    if(item != null)
+                    {
+                        pDept = item.Department;
+                    }
+                }
                 return pDept;
             }
             throw new Exception("Patient not found");
@@ -182,16 +188,14 @@ namespace HospitalManagementWebApi.Controllers
         }
 
         [HttpGet]
-        [Route("GetPatientVisitRecordsCount")]
-        public int GetPatientVisitRecordsCount(int ID)
+        [Route("GetPatient")]
+        public PatientDTO GetPatient(int userID)
         {
-            Patient TargetPatient = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
+            Patient TargetPatient = HMdBContext.PatientList.Where(x => x.PatientID == userID).FirstOrDefault();
 
             if (TargetPatient != null)
             {
-                int visitHistoryCount = TargetPatient.VisitHistory.Count;
-
-                return visitHistoryCount;
+                return MapToDTO(TargetPatient);
             }
             throw new Exception("Patient not found");
         }
@@ -202,15 +206,16 @@ namespace HospitalManagementWebApi.Controllers
         public double GetDepartmentPrice(int ID)
         {
             double price = 0;
-            if (GetPatientDept(ID) == DepartmentEnum.Outpatient)
+            DepartmentEnum dept = GetPatientDept(ID);
+            if (dept == DepartmentEnum.Outpatient)
             {
                 price = 30.00;
             }
-            else if (GetPatientDept(ID) == DepartmentEnum.Inpatient)
+            else if (dept == DepartmentEnum.Inpatient)
             {
                 price = 100.00;
             }
-            else if (GetPatientDept(ID) == DepartmentEnum.Emergency)
+            else if (dept == DepartmentEnum.Emergency)
             {
                 price = 250.00;
             }
@@ -223,19 +228,20 @@ namespace HospitalManagementWebApi.Controllers
         public double GetWardPrice(int ID)
         {
             double price = 0;
-            if (GetPatientWard(ID) == WardEnum.ClassA)
+            WardEnum ward = GetPatientWard(ID);
+            if (ward == WardEnum.ClassA)
             {
                 price = 250.00;
             }
-            else if (GetPatientWard(ID) == WardEnum.ClassB)
+            else if (ward == WardEnum.ClassB)
             {
                 price = 150.00;
             }
-            else if (GetPatientWard(ID) == WardEnum.ClassC)
+            else if (ward == WardEnum.ClassC)
             {
                 price = 100.00;
             }
-            else if (GetPatientWard(ID) == WardEnum.Private)
+            else if (ward == WardEnum.Private)
             {
                 price = 500.00;
             }
@@ -248,29 +254,30 @@ namespace HospitalManagementWebApi.Controllers
         public double GetMedicinePrice(int ID)
         {
             double price = 0;
-            for (int i = 0; i < GetPatientMedicineList(ID).Count; i++)
+            List<string> medList = GetPatientMedicineList(ID);
+            for (int i = 0; i < medList.Count; i++)
             {
-                if (GetPatientMedicineList(ID)[i] == "Paracetamol")
+                if (medList[i] == "Paracetamol")
                 {
                     price += 8.85;
                 }
-                else if (GetPatientMedicineList(ID)[i] == "Antibiotics")
+                else if (medList[i] == "Antibiotics")
                 {
                     price += 15.40;
                 }
-                else if (GetPatientMedicineList(ID)[i] == "AntiInflammation")
+                else if (medList[i] == "AntiInflammation")
                 {
                     price += 10.75;
                 }
-                else if (GetPatientMedicineList(ID)[i] == "Antihistamine")
+                else if (medList[i] == "Antihistamine")
                 {
                     price += 20.90;
                 }
-                else if (GetPatientMedicineList(ID)[i] == "Lozenges")
+                else if (medList[i] == "Lozenges")
                 {
                     price += 6.35;
                 }
-                else if (GetPatientMedicineList(ID)[i] == "Painkillers")
+                else if (medList[i] == "Painkillers")
                 {
                     price += 8.50;
                 }
@@ -279,6 +286,8 @@ namespace HospitalManagementWebApi.Controllers
             return price;
         }
 
+        [HttpGet]
+        [Route("ValidatePatient")]
         public bool ValidatePatient(int ID)
         {
             Patient pObj = HMdBContext.PatientList.Where(x => x.PatientID == ID).FirstOrDefault();
@@ -291,8 +300,11 @@ namespace HospitalManagementWebApi.Controllers
         private PatientDTO MapToDTO(Patient patient)
         {
             List<PatientVisitRecordDTO> recorddtoList = new List<PatientVisitRecordDTO>();
-            foreach (PatientVisitRecord item in patient.VisitHistory)
-                recorddtoList.Add(MapToDTO(item));
+            if (patient.VisitHistory != null)
+            {
+                foreach (PatientVisitRecord item in patient.VisitHistory)
+                    recorddtoList.Add(MapToDTO(item));
+            }
             PatientDTO dtoObj = new PatientDTO(patient.PatientID, patient.PatientName, patient.Ethnicity, patient.PatientHeight, patient.PatientWeight, patient.PatientGender, patient
                 .Address, patient.ContactNum, patient.PatientAge);
             dtoObj.AddPatientVisitInformation(recorddtoList);
@@ -301,8 +313,14 @@ namespace HospitalManagementWebApi.Controllers
         private Patient MapToModel(PatientDTO patient)
         {
             List<PatientVisitRecord> recorddtoList = new List<PatientVisitRecord>();
-            foreach (PatientVisitRecordDTO item in patient.VisitHistory)
-                recorddtoList.Add(MapToModel(item));
+            if (patient.VisitHistory != null)
+            {
+                foreach (PatientVisitRecordDTO item in patient.VisitHistory)
+                {
+                    recorddtoList.Add(MapToModel(item));
+                }
+            }
+            
             Patient modelObj = new Patient(patient.PatientID, patient.PatientName, patient.Ethnicity, patient.PatientHeight, patient.PatientWeight, patient.PatientGender, patient
                 .Address, patient.ContactNum, patient.PatientAge);
             modelObj.AddPatientVisitInformation(recorddtoList);
@@ -311,13 +329,13 @@ namespace HospitalManagementWebApi.Controllers
 
         private PatientVisitRecordDTO MapToDTO(PatientVisitRecord record)
         {
-            BillDTO bidto = MapToDTO(record.BillInformation);          
-            return new PatientVisitRecordDTO(record.RecordNumber, record.DoctorInCharge,record.Department,record.Ward,record.ListOfSymptoms,record.ListOfMedicines, bidto, record.PatientID);
+            BillDTO bidto = MapToDTO(record.BillInformation);
+            return new PatientVisitRecordDTO(record.ID, record.DoctorInCharge,record.Department,record.Ward,record.ListOfSymptoms,record.ListOfMedicines, bidto);
         }
         private PatientVisitRecord MapToModel(PatientVisitRecordDTO record)
         {
             Bill bidto = MapToModel(record.BillInformation);
-            return new PatientVisitRecord(record.RecordNumber, record.DoctorInCharge, record.Department, record.Ward, record.ListOfSymptoms, record.ListOfMedicines, bidto, record.PatientID);
+            return new PatientVisitRecord(record.ID, record.DoctorInCharge, record.Department, record.Ward, record.ListOfSymptoms, record.ListOfMedicines, bidto);
         }
 
         private BillDTO MapToDTO(Bill bill)

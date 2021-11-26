@@ -58,8 +58,15 @@ namespace HospitalManagementWebApi.Controllers
         private PatientDTO MapToDTO(Patient patient)
         {
             List<PatientVisitRecordDTO> recorddtoList = new List<PatientVisitRecordDTO>();
-            foreach (PatientVisitRecord item in patient.VisitHistory)
-                recorddtoList.Add(MapToDTO(item));
+            if (patient.VisitHistory != null)
+            {
+                foreach (PatientVisitRecord item in patient.VisitHistory)
+                {
+                    recorddtoList.Add(MapToDTO(item));
+                }   
+            }
+            
+                
             PatientDTO dtoObj = new PatientDTO(patient.PatientID, patient.PatientName, patient.Ethnicity, patient.PatientHeight, patient.PatientWeight, patient.PatientGender, patient
                 .Address, patient.ContactNum, patient.PatientAge);
             dtoObj.AddPatientVisitInformation(recorddtoList);
@@ -68,7 +75,7 @@ namespace HospitalManagementWebApi.Controllers
         private PatientVisitRecordDTO MapToDTO(PatientVisitRecord record)
         {
             BillDTO bidto = MapToDTO(record.BillInformation);
-            return new PatientVisitRecordDTO(record.RecordNumber, record.DoctorInCharge, record.Department, record.Ward, record.ListOfSymptoms, record.ListOfMedicines, bidto, record.PatientID);
+            return new PatientVisitRecordDTO(record.ID, record.DoctorInCharge, record.Department, record.Ward, record.ListOfSymptoms, record.ListOfMedicines, bidto);
         }
         private BillDTO MapToDTO(Bill bill)
         {

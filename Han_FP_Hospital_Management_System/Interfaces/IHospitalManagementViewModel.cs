@@ -7,7 +7,7 @@ namespace Han_FP_Hospital_Management_System.Interfaces
     interface IHospitalManagementViewModel
     {
         string AddPatient(PatientDTO patient);
-        PatientVisitRecordDTO AdmitPatient(int ID, PatientVisitRecordDTO visitRecord);
+        string AdmitPatient(int ID, PatientVisitRecordDTO visitRecord);
         PatientDTO ViewPatientInfo(int ID);
         BillDTO GenerateBill(int ID);
         BillDTO SettleBill(int ID, int BillID);
@@ -23,6 +23,7 @@ namespace Han_FP_Hospital_Management_System.Interfaces
         ICollection<PatientDTO> GetPatientByDepartment(DepartmentEnum departmentType);
         ICollection<BillDTO> PrintAllBills();
         UserDTO GetUser(int userID);
+        PatientDTO GetPatient(int userID);
         bool LogOn(int userId, string password);
     }
 }
